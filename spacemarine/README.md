@@ -1,5 +1,6 @@
 ## Payara configuration 
 ### Setup 
+Work fine with `Payara 4.1.2.181`
 #### JDBC postgres
 Connection pool inside `resources` tag
 ```xml
