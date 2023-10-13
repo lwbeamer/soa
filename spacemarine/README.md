@@ -2,7 +2,9 @@
 ### Setup 
 Work fine with `Payara 4.1.2.181`
 #### JDBC postgres
-Connection pool inside `resources` tag
+Add jdbc postgres jar into `domains/<domain-name>/lib`
+
+Connection pool inside `resources` tag in `domain.xml`
 ```xml
 <jdbc-connection-pool datasource-classname="org.postgresql.ds.PGSimpleDataSource" name="Postgres" res-type="javax.sql.DataSource">
 <property name="password" value="postgres" />
