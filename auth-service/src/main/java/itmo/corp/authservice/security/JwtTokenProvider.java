@@ -16,11 +16,10 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    @Value("jwt.private")
+    @Value("${jwt.private}")
     String privateKeyString;
 
     public String generateJwtToken(String username) throws InvalidKeySpecException, NoSuchAlgorithmException {
-
         PrivateKey privateKey = getPrivateKeyFromString(privateKeyString, "RSA");
 
         return Jwts.builder()
@@ -28,7 +27,6 @@ public class JwtTokenProvider {
                 .setIssuedAt(new Date())
                 .signWith(privateKey, SignatureAlgorithm.RS256)
                 .compact();
-
     }
 
     public PrivateKey getPrivateKeyFromString(String privateKeyString, String algorithm)
