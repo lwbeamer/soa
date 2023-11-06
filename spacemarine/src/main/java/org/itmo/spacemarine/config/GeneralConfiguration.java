@@ -10,13 +10,13 @@ import javax.sql.DataSource;
 
 @Configuration
 public class GeneralConfiguration {
-    private static final String JNDI = "jdbc/soa";
-
-    @Bean(destroyMethod = "") // disable inference of a potential close() method as a destroyer
-    public DataSource dataSource() throws DataSourceLookupFailureException {
-        JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
-        return dataSourceLookup.getDataSource(JNDI);
-    }
+//    private static final String JNDI = "jdbc/soa";
+//
+//    @Bean(destroyMethod = "") // disable inference of a potential close() method as a destroyer
+//    public DataSource dataSource() throws DataSourceLookupFailureException {
+//        JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
+//        return dataSourceLookup.getDataSource(JNDI);
+//    }
 
 
 }

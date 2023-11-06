@@ -1,5 +1,7 @@
 package itmo.corp.secondaryservice.controller;
 
+import itmo.corp.secondaryservice.service.StarshipService;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -10,6 +12,8 @@ import jakarta.ws.rs.core.Response;
 @Path("/starships")
 public class StarshipController {
 
+    @Inject
+    private StarshipService starshipService;
     @PUT
     @Path("/{starship_id}/load/{space-marine_id}")
     @Produces(MediaType.TEXT_PLAIN)
@@ -17,6 +21,7 @@ public class StarshipController {
             @PathParam("starship_id") String starshipId,
             @PathParam("space-marine_id") String spaceMarineId
     ) {
+        starshipService.loadToStarship();
         return Response.ok("Space marine loaded successfully" + starshipId + " " + spaceMarineId).build();
     }
 
@@ -26,6 +31,8 @@ public class StarshipController {
     public Response unloadAllSpaceMarines(
             @PathParam("starship_id") String starshipId
     ) {
-        return Response.ok("All space marines unloaded successfully" + starshipId).build();
+        starshipService.unloadAllFromStarship();
+        return Response.ok(starshipService.getToken()).build();
+//        return Response.ok("All space marines unloaded successfully" + starshipId).build();
     }
 }
