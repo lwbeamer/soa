@@ -17,15 +17,6 @@
         <Button label="Войти" icon="pi pi-check" @click="signIn"/>
       </div>
     </form>
-    <div class="signin-oauth">
-      <span>Также можете войти при помощи</span>
-      <div class="button">
-          <Button class="google p-0 p-button-outlined" aria-label="Google" @click="signInOauth">
-            <i class="pi pi-google px-2"></i>
-            <span class="px-3">Google</span>
-          </Button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -59,7 +50,7 @@ export default {
               this.$router.push('/main/profile');
           })
           .catch((err)=>{
-            this.$toast.add({severity:'error', summary: 'Вход', detail: err.response.data, life: 3000});
+            this.$toast.add({severity:'error', summary: 'Вход', detail: err.response.data.message, life: 3000});
           }
       );
     },

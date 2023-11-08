@@ -3,19 +3,6 @@
     <form class="signup-form">
       <div class="field">
         <span class="p-float-label">
-          <InputText id="name" v-model="signupForm.name" style="width: 30vw"/>
-          <label for="name">Имя</label>
-        </span>
-      </div>
-      <div class="field">
-        <span class="p-float-label">
-          <InputText id="surname" v-model="signupForm.surname" style="width: 30vw"/>
-          <label for="surname">Фамилия</label>
-        </span>
-      </div>
-
-      <div class="field">
-        <span class="p-float-label">
           <InputText id="username" v-model="signupForm.username" style="width: 30vw"/>
           <label for="username">Логин</label>
         </span>
@@ -30,15 +17,6 @@
         <Button label="Регистрация" icon="pi pi-check" @click="signUp"/>
       </div>
     </form>
-    <div class="signin-oauth">
-      <span>Также можете зарегистрироваться при помощи</span>
-      <div class="button">
-        <Button class="google p-0 p-button-outlined" aria-label="Google" @click="signUpOauth">
-          <i class="pi pi-google px-2"></i>
-          <span class="px-3">Google</span>
-        </Button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -67,7 +45,7 @@ export default {
 
           })
           .catch((err)=>{
-            this.$toast.add({severity:'error', summary: 'Регистрация', detail: err.response.data, life: 3000});
+            this.$toast.add({severity:'error', summary: 'Регистрация', detail: err.response.data.message, life: 3000});
           })
     },
     signUpOauth(){

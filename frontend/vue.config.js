@@ -1,22 +1,15 @@
-const { defineConfig } = require('@vue/cli-service')
-const express = require('express');
-
-module.exports = defineConfig({
+module.exports = {
   transpileDependencies: true,
+  publicPath: process.env.NODE_ENV === 'prod' ? '/~s312200/soa-frontend/' : '/',
   devServer: {
     port: 8080,
-    hot: false,
-    liveReload: false,
-    onAfterSetupMiddleware(devServer) {
-      const expressApp = devServer.app;
-      expressApp.use('/assets', express.static('src/assets'));
-    }
-    ,
+    hot: true,
+    liveReload: true,
     proxy: {
-      '/api': {
-        target: 'http://localhost:8090/',
+      '/api/auth': {
+        target: 'http://localhost:9999/',
         changeOrigin: true
       },
     }
-  }
-});
+  },
+};
