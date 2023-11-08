@@ -14,13 +14,14 @@ import org.itmo.spacemarine.entity.Weapon;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+
 @Getter
 @Setter
 @ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SpaceMarineCreateRequestDto {
+public class SpaceMarineUpdateDto {
 
     @NotNull
     private String name;
@@ -43,4 +44,7 @@ public class SpaceMarineCreateRequestDto {
 
     @NotNull
     private Chapter chapter;
+
+    @NotNull
+    private Long starshipId;
 }

@@ -3,6 +3,7 @@ package org.itmo.spacemarine.converter;
 import org.itmo.spacemarine.dto.SpaceMarineCreateRequestDto;
 import org.itmo.spacemarine.dto.SpaceMarineResponseDto;
 import org.itmo.spacemarine.entity.SpaceMarine;
+import org.itmo.spacemarine.entity.Weapon;
 import org.springframework.stereotype.Service;
 
 @Service

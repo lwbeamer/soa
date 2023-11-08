@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        generate_statistics: true
+#        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+
+  #works for tomcat application server, not for payara
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+  #works for tomcat application server, not for payara
+server:
+  servlet:
+    context-path: /itmo/api
+  port: 8089
