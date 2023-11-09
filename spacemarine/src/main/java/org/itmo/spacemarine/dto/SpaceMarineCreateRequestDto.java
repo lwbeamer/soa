@@ -29,7 +29,7 @@ public class SpaceMarineCreateRequestDto {
     private Coordinates coordinates;
 
     @NotNull
-    @Min(0)
+    @Min(value = 0, message = "Минимальное значение здрровья = 0!")
     private Long health;
 
     @NotNull
