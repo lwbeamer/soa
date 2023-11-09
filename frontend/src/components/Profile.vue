@@ -12,17 +12,10 @@
                 Логин
               </span>
             <span class="info-content">
-                {{ profile.userLogin }}
+                {{ username }}
               </span>
           </div>
-          <div class="main-info-name">
-              <span class="info-title">
-                Имя и фамилия
-              </span>
-            <span class="info-content">
-                {{ profile.name }} {{ profile.surname }}
-              </span>
-          </div>
+
         </div>
         <div class="img">
           <font-awesome-icon icon="fa-solid fa-user" size="10x" style="color: #183153"/>
@@ -33,13 +26,12 @@
 </template>
 
 <script>
-
-
 export default {
   name: "Profile",
   data() {
     return {
-      profile: Object,
+      myvar:  process.env.AUTH_URL,
+      username: null,
       bankCardDialogVisible: false,
       replenishForm: {
         amount: null
@@ -66,22 +58,13 @@ export default {
   },
   methods: {
     getProfileInfo() {
-      this.$store.dispatch('checkIsLoggedIn').then(
-          (resp) => {
-            this.profile = resp
-          },
-          () => {
-            this.$toast.add({severity: 'error', summary: 'Личный кабинет', detail: err.response.data, life: 3000});
-            this.$router.push('/login/signIn')
-          }
-      )
+      this.username = this.$store.state.user.username;
     },
 
   },
   mounted() {
-
-    // this.getProfileInfo()
-    // this.getBankCards()
+    console.log(process.env.VUE_APP_HELLO)
+    this.getProfileInfo()
   }
 }
 </script>

@@ -5,8 +5,8 @@
       <Toolbar class="mb-4">
         <template #start>
           <Button label="New" icon="pi pi-plus" severity="success" class="mr-2" @click="openNew"/>
-          <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected"
-                  :disabled="!selectedMarines || !selectedMarines.length"/>
+          <Button label="Get By ID" severity="danger" class="mr-2" @click="openGetMarineById"/>
+          <Button label="Space Utils" severity="success" @click="openSpaceUtils"/>
         </template>
       </Toolbar>
       <div class="overflow-x-scroll h-auto w-auto">
@@ -14,7 +14,7 @@
                    :paginator="true" :page="0" :rows="10"
                    :totalRecords="totalRecords"
                    filterDisplay="menu"
-                   :globalFilterFields="['id', 'achievements', 'name', 'coordinates.x', 'coordinates.y', 'health', 'category', 'weaponType', 'creationDate', 'chapter.name', 'chapter.world']"
+                   :globalFilterFields="['id', 'achievements', 'name', 'coordinates.x', 'coordinates.y', 'health', 'category', 'weaponType', 'creationDate', 'starshipId', 'chapter.name', 'chapter.world']"
                    @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                    :rowsPerPageOptions="[1,5,10,25]"
@@ -40,6 +40,13 @@
                   :showFilterMatchModes="false" :show-filter-operator="false">
             <template #filter="{ filterModel }">
               <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by name"/>
+            </template>
+          </Column>
+          <Column field="starshipId" header="Starship ID" sortable style="min-width:16rem"
+                  :showFilterMatchModes="false" :show-filter-operator="false">
+            <template #filter="{ filterModel }">
+              <InputText v-model="filterModel.value" type="text" class="p-column-filter"
+                         placeholder="Search by starship id"/>
             </template>
           </Column>
           <Column field="achievements" header="Achievements" sortable style="min-width:12rem"
@@ -139,7 +146,21 @@
         <label for="health">Health</label>
         <InputNumber id="health" v-model="marine.health" integeronly/>
       </div>
-
+      <!--      <div class="field">-->
+      <!--        <label class="mb-3">Starship</label>-->
+      <!--        <Dropdown :options="starships" v-model="selectedStarship" optionLabel="name">-->
+      <!--          <template #value="slotProps">-->
+      <!--            <div class="" v-if="selectedStarship != null" style="width: 30vw">-->
+      <!--              <div>{{ slotProps.value.name }}</div>-->
+      <!--            </div>-->
+      <!--          </template>-->
+      <!--          <template #option="slotProps" style="width: 30vw">-->
+      <!--            <div class="flex justify-content-between">-->
+      <!--              <div>{{ slotProps.option.name }}</div>-->
+      <!--            </div>-->
+      <!--          </template>-->
+      <!--        </Dropdown>-->
+      <!--      </div>-->
 
       <div class="field">
         <label class="mb-3">Astartes Category</label>
@@ -217,15 +238,145 @@
         <Button label="Yes" icon="pi pi-check" text @click="deleteMarine"/>
       </template>
     </Dialog>
-
-    <Dialog v-model:visible="deleteMarinesDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
-      <div class="confirmation-content">
-        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"/>
-        <span v-if="marine">Are you sure you want to delete the selected marines?</span>
+    <Dialog v-model:visible="spaceUtilsDialog" :style="{width: '450px'}" header="Space Utils" :modal="true">
+      <div class="p-fluid">
+        <div class="field">
+          <label class="mb-3">Starship</label>
+          <Dropdown :options="spaceUtilsOperations" v-model="selectedSpaceUtilOperation" optionLabel="label">
+            <template #value="slotProps">
+              <div class="" v-if="selectedSpaceMarineField != null" style="width: 30vw">
+                <div>{{ slotProps.value.label }}</div>
+              </div>
+            </template>
+            <template #option="slotProps" style="width: 30vw">
+              <div class="flex justify-content-between">
+                <div>{{ slotProps.option.label }}</div>
+              </div>
+            </template>
+          </Dropdown>
+        </div>
+        <div class="field">
+          <label class="mb-3">Starship</label>
+          <Dropdown :options="spaceMarineFields" v-model="selectedSpaceMarineField" optionLabel="label">
+            <template #value="slotProps">
+              <div class="" v-if="selectedSpaceMarineField != null" style="width: 30vw">
+                <div>{{ slotProps.value.value }}</div>
+              </div>
+            </template>
+            <template #option="slotProps" style="width: 30vw">
+              <div class="flex justify-content-between">
+                <div>{{ slotProps.option.value }}</div>
+              </div>
+            </template>
+          </Dropdown>
+        </div>
+      </div>
+      <div class="p-fluid" v-if="submittedSpaceUtils && minMaxOperation && marine !== null">
+        <div class="field col">
+          <label for="id">ID</label>
+          <span> {{ marine.id }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">name</label>
+          <span> {{ marine.name }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">achievements</label>
+          <span> {{ marine.achievements }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">creationDate</label>
+          <span> {{ marine.creationDate }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">starshipId</label>
+          <span> {{ marine.starshipId }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">health</label>
+          <span> {{ marine.health }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">weaponType</label>
+          <span> {{ marine.weaponType }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">category</label>
+          <span> {{ marine.category }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">category</label>
+          <span> {{ marine.category }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">chapterName</label>
+          <span> {{ marine.chapter.name }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">chapterWorld</label>
+          <span> {{ marine.chapter.world }}</span>
+        </div>
       </div>
       <template #footer>
-        <Button label="No" icon="pi pi-times" text @click="deleteMarinesDialog = false"/>
-        <Button label="Yes" icon="pi pi-check" text @click="deleteSelectedMarines"/>
+        <Button label="View" icon="pi pi-check" text @click="submitSpaceUtil"/>
+      </template>
+    </Dialog>
+
+    <Dialog v-model:visible="getMarineByIdDialog" :style="{width: '450px'}" header="Get Marine By ID" :modal="true">
+      <div class="p-fluid">
+        <div class="field col">
+          <label for="id">ID</label>
+          <InputNumber id="id" v-model="getMarineId" integeronly/>
+        </div>
+      </div>
+      <div class="p-fluid" v-if="marine !== null">
+        <div class="field col">
+          <label for="id">ID</label>
+          <span> {{ marine.id }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">name</label>
+          <span> {{ marine.name }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">achievements</label>
+          <span> {{ marine.achievements }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">creationDate</label>
+          <span> {{ marine.creationDate }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">starshipId</label>
+          <span> {{ marine.starshipId }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">health</label>
+          <span> {{ marine.health }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">weaponType</label>
+          <span> {{ marine.weaponType }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">category</label>
+          <span> {{ marine.category }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">category</label>
+          <span> {{ marine.category }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">chapterName</label>
+          <span> {{ marine.chapter.name }}</span>
+        </div>
+        <div class="field col">
+          <label for="id">chapterWorld</label>
+          <span> {{ marine.chapter.world }}</span>
+        </div>
+      </div>
+      <template #footer>
+        <Button label="View" icon="pi pi-check" text @click="getMarineById"/>
       </template>
     </Dialog>
   </div>
@@ -246,12 +397,38 @@ export default {
       marineDialog: false,
       deleteMarineDialog: false,
       deleteMarinesDialog: false,
+      getMarineByIdDialog: false,
+      getMarineId: null,
+      spaceUtilsDialog: false,
+      spaceUtilsOperations: [
+        {"label": "Минимум", "value":"min"},
+        {"label": "Максимум", "value":"max"},
+        {"label": "Сумма", "value":"sum"},
+      ],
+      submittedSpaceUtils: false,
+      minMaxOperation: false,
+      spaceMarineFields: [
+        {"value":"name"},
+        {"value":"coordinatesX"},
+        {"value":"coordinatesY"},
+        {"value":"starshipId"},
+        {"value":"creationDate"},
+        {"value":"health"},
+        {"value":"achievements"},
+        {"value":"category"},
+        {"value":"weaponType"},
+        {"value":"chapterName"},
+        {"value":"chapterWorld"},
+      ],
+      selectedSpaceMarineField: null,
+      selectedSpaceUtilOperation: null,
       marine: {
         "name": "",
         "coordinates": {
           "x": 1,
           "y": 1
         },
+        "starshipId": 2,
         "creationDate": "2023-10-11T17:25:59.248Z",
         "health": null,
         "achievements": "string",
@@ -260,7 +437,7 @@ export default {
         "chapter": {
           "name": "New",
           "world": "Finland"
-        }
+        },
       },
       selectedMarines: null,
       filters: {},
@@ -290,7 +467,27 @@ export default {
         return group1.toUpperCase();
       })
     },
-
+    submitSpaceUtil(){
+      let data = {
+        "operation": this.selectedSpaceUtilOperation.value,
+        "field": this.selectedSpaceMarineField.value
+      }
+      // SpaceMarineService.getSpaceUtils(data)
+      //     .then((data) => {
+      //       this.submittedSpaceUtils = true;
+      //       this.minMaxOperation = !('sumHealth' in data.response.data);
+      //       this.$toast.add({severity:'success', summary: 'SpaceMarineUtils', detail: "Successfully get marines!", life: 3000});
+      //
+      //     })
+      //     .catch((err)=>{
+      //       this.submittedSpaceUtils = true;
+      //       this.$toast.add({severity:'error', summary: 'SpaceMarineUtils', detail: err.response.data, life: 3000});
+      //     })
+    },
+    openSpaceUtils() {
+      this.marine = null
+      this.spaceUtilsDialog = true
+    },
 
     buildRequestParams(data) {
       const queryParams = [];
@@ -322,7 +519,17 @@ export default {
     },
     loadLazyData() {
       console.log(this.lazyParams);
-      console.log(this.buildRequestParams(this.lazyParams));
+      const reqParams = this.buildRequestParams(this.lazyParams)
+      // SpaceMarineService.getMarines(reqParams)
+      //     .then((data) => {
+      //       this.marines = data.response.data
+      //       this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Successfully get marines!", life: 3000});
+      //
+      //     })
+      //     .catch((err)=>{
+      //       this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+      //     })
+      console.log(reqParams);
     },
     onPage(event) {
       this.lazyParams = event;
@@ -337,15 +544,27 @@ export default {
       this.lazyParams.filters = this.filters;
       this.loadLazyData();
     },
-    formatCurrency(value) {
-      if (value)
-        return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
-      return;
-    },
+
     openNew() {
       this.marine = SpaceMarineService.getDefaultMarine();
+      // this.starships = SpaceMarineService.getStarships();
+      this.selectedStarship = null;
       this.submitted = false;
       this.marineDialog = true;
+    },
+    openGetMarineById() {
+      this.marine = null;
+      this.getMarineByIdDialog = true;
+    },
+    getMarineById() {
+      // SpaceMarineService.getMarineById(this.getMarineId)
+      //     .then(() => {
+      //       this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Successfully got marine!", life: 3000});
+      //
+      //     })
+      //     .catch((err)=>{
+      //       this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+      //     })
     },
     hideDialog() {
       this.marineDialog = false;
@@ -353,19 +572,27 @@ export default {
     },
     saveMarine() {
       this.submitted = true;
-
       if (this.marine.name.trim()) {
         if (this.marine.id) {
-          this.marine.inventoryStatus = this.marine.inventoryStatus.value ? this.marine.inventoryStatus.value : this.marine.inventoryStatus;
           this.marines[this.findIndexById(this.marine.id)] = this.marine;
-          this.$toast.add({severity: 'success', summary: 'Successful', detail: 'Marine Updated', life: 3000});
+          // SpaceMarineService.updateMarine(this.marine)
+          //     .then(() => {
+          //       this.marines[this.findIndexById(this.marine.id)] = this.marine;
+          // this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Marine Updated!", life: 3000});
+          // })
+          // .catch((err)=>{
+          //   this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+          // })
         } else {
-          this.marine.id = this.createId();
-          this.marine.code = this.createId();
-          this.marine.image = 'marine-placeholder.svg';
-          this.marine.inventoryStatus = this.marine.inventoryStatus ? this.marine.inventoryStatus.value : 'INSTOCK';
           this.marines.push(this.marine);
-          this.$toast.add({severity: 'success', summary: 'Successful', detail: 'Marine Created', life: 3000});
+          // SpaceMarineService.createMarine(this.marine)
+          //     .then(() => {
+          //       this.marines.push(this.marine);
+          // this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Marine Created!", life: 3000});
+          // })
+          // .catch((err)=>{
+          //   this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+          // })
         }
 
         this.marineDialog = false;
@@ -374,6 +601,8 @@ export default {
     },
     editMarine(marine) {
       this.marine = {...marine};
+      // this.starships = SpaceMarineService.getStarships();
+      // this.selectedStarship = this.starships.find((x) => x.id === this.marine.starshipId);
       this.marineDialog = true;
     },
     confirmDeleteMarine(marine) {
@@ -384,7 +613,14 @@ export default {
       this.marines = this.marines.filter(val => val.id !== this.marine.id);
       this.deleteMarineDialog = false;
       this.marine = {};
-      this.$toast.add({severity: 'success', summary: 'Successful', detail: 'Marine Deleted', life: 3000});
+      // SpaceMarineService.createMarine(this.marine)
+      //     .then(() => {
+      //       this.marines = this.marines.filter(val => val.id !== this.marine.id);
+      //       this.$toast.add({severity: 'success', summary: 'SpaceMarine', detail: "Marine Deleted!", life: 3000});
+      //     })
+      //     .catch((err) => {
+      //       this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+      //     })
     },
     findIndexById(id) {
       let index = -1;
@@ -397,25 +633,8 @@ export default {
 
       return index;
     },
-    createId() {
-      let id = '';
-      var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      for (var i = 0; i < 5; i++) {
-        id += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return id;
-    },
-    exportCSV() {
-      this.$refs.dt.exportCSV();
-    },
     confirmDeleteSelected() {
       this.deleteMarinesDialog = true;
-    },
-    deleteSelectedMarines() {
-      this.marines = this.marines.filter(val => !this.selectedMarines.includes(val));
-      this.deleteMarinesDialog = false;
-      this.selectedMarines = null;
-      this.$toast.add({severity: 'success', summary: 'Successful', detail: 'Marines Deleted', life: 3000});
     },
     initFilters() {
       this.filters = {
@@ -435,6 +654,7 @@ export default {
         },
         health: {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]},
         creationDate: {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]},
+        starshipId: {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]},
         'chapter.name': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]},
         'chapter.world': {
           operator: FilterOperator.AND,

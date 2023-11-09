@@ -1,8 +1,10 @@
 import axios from "axios";
+import * as process from "process";
 
 class AuthService{
+    AUTH_API=  process.env.VUE_APP_AUTH_API
     signIn(signinForm){
-        return axios.post('/api/v1/auth/login', signinForm)
+        return axios.post(`${this.AUTH_API}/login`, signinForm)
             .then((resp) => {
                 if (resp.data.token != null) localStorage.setItem('user', JSON.stringify(resp.data))
                 return resp.data
@@ -14,7 +16,7 @@ class AuthService{
     }
 
     signUp(signupForm){
-        return axios.post('/api/v1/auth/register', signupForm)
+        return axios.post(`${this.AUTH_API}/register`, signupForm)
     }
 
     loginOAuth(user){
