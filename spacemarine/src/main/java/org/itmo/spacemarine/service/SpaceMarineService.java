@@ -134,7 +134,7 @@ public class SpaceMarineService {
         spaceMarine.setHealth(dto.getHealth());
         spaceMarine.setChapter(dto.getChapter());
         spaceMarine.setCoordinates(dto.getCoordinates());
-        spaceMarine.setStarship(starshipService.getStarship(dto.getStarshipId()));
+        spaceMarine.setStarship(dto.getStarshipId() != null ? starshipService.getStarship(dto.getStarshipId()): null);
         spaceMarine.setWeaponType(dto.getWeaponType());
         spaceMarine.setName(dto.getName());
         spaceMarineRepository.save(spaceMarine);

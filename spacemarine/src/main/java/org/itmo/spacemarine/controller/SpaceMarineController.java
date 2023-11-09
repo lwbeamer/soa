@@ -67,7 +67,6 @@ public class SpaceMarineController {
 
     @PostMapping
     public void addSpaceMarine(@RequestBody SpaceMarineCreateRequestDto requestDto) {
-        System.out.println("ПОСТУПИЛ ТАКОЙ ЗАПРОС: " + requestDto);
         spaceMarineService.addNewMarine(requestDto);
     }
 }

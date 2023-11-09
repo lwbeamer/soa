@@ -22,7 +22,8 @@ public enum SpaceMarineFields {
 
     CREATION_DATE("creationDate", null, "creationDate"),
     COORDINATES_X("coordinates", "x", "coordinatesX"),
-    COORDINATES_Y("coordinates", "y", "coordinatesY");
+    COORDINATES_Y("coordinates", "y", "coordinatesY"),
+    STARSHIP_ID("starship","id", "starshipId");
 
 
     private static final Map<String, SpaceMarineFields> BY_QUERY_PARAM_NAME = new HashMap<>();
@@ -31,7 +32,6 @@ public enum SpaceMarineFields {
         for (SpaceMarineFields c : values()) {
             BY_QUERY_PARAM_NAME.put(c.queryParamName, c);
         }
-        System.out.println("МАПА С ПАОАМАМИ В ЕНАМ " + BY_QUERY_PARAM_NAME);
     }
 
 
@@ -46,7 +46,6 @@ public enum SpaceMarineFields {
     }
 
     public static SpaceMarineFields valueOfQueryParam(String param) {
-        System.out.println("ЗАПРАШИВАЕМ ПАРАМЕТР = "+ param);
         return BY_QUERY_PARAM_NAME.get(param);
     }
 }

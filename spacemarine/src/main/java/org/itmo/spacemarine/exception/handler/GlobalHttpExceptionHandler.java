@@ -2,6 +2,7 @@ package org.itmo.spacemarine.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.itmo.spacemarine.dto.Error;
+import org.itmo.spacemarine.exception.AccessForbiddenException;
 import org.itmo.spacemarine.exception.BusinessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,10 +33,18 @@ public class GlobalHttpExceptionHandler extends ResponseEntityExceptionHandler {
                         .build());
     }
 
-
-
-
-
+    @ExceptionHandler(AccessForbiddenException.class)
+    public ResponseEntity<Error> handleAccessForbiddenException(AccessForbiddenException ex) {
+        String message = ex.getMessage();
+        log.info(message, ex);
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(Error.builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .message(message)
+                        .timestamp(Instant.now())
+                        .build());
+    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -62,4 +71,6 @@ public class GlobalHttpExceptionHandler extends ResponseEntityExceptionHandler {
                         .timestamp(Instant.now())
                         .build());
     }
+
+
 }
