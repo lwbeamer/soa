@@ -48,7 +48,7 @@ public class JwtTokenFilter implements Filter {
 
                 String username = parseClaimsJws.getBody().getSubject();
 
-                System.out.println("USERNAME = " + username);
+                System.out.println("Authorized successfully, username: " + username);
 
             } catch (JwtException | NoSuchAlgorithmException | InvalidKeySpecException e) {
                 httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);

@@ -1,0 +1,43 @@
+package itmo.corp.secondaryservice.dto;
+
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class SpaceMarineResponseDto {
+
+    private Long id;
+
+    private String name;
+
+    private Coordinates coordinates;
+
+    private Long health;
+
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    private LocalDate creationDate;
+
+    private String achievements;
+
+    private AstartesCategory category;
+
+    private Weapon weaponType;
+
+    private Chapter chapter;
+
+    private Long starshipId;
+
+}

@@ -51,4 +51,6 @@ public class SpaceMarineResponseDto {
     @NotNull
     private Chapter chapter;
 
+    @NotNull
+    private Long starshipId;
 }
