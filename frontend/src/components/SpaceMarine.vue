@@ -18,6 +18,8 @@
                    @page="onPage($event)" @sort="onSort($event)" @filter="onFilter($event)"
                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                    :rowsPerPageOptions="[1,5,10,25]"
+                   scrollable
+                   scroll-height="60vh"
                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} marines">
           <template #header>
             <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
@@ -272,50 +274,53 @@
         </div>
       </div>
       <div class="p-fluid" v-if="submittedSpaceUtils && minMaxOperation && marine !== null">
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">ID</label>
           <span> {{ marine.id }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">name</label>
           <span> {{ marine.name }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">achievements</label>
           <span> {{ marine.achievements }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">creationDate</label>
           <span> {{ marine.creationDate }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">starshipId</label>
           <span> {{ marine.starshipId }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">health</label>
           <span> {{ marine.health }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">weaponType</label>
           <span> {{ marine.weaponType }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">category</label>
           <span> {{ marine.category }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">category</label>
           <span> {{ marine.category }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">chapterName</label>
           <span> {{ marine.chapter.name }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">chapterWorld</label>
           <span> {{ marine.chapter.world }}</span>
         </div>
+      </div>
+      <div class="p-fluid" v-if="submittedSpaceUtils && !minMaxOperation && sumField">
+        {{ sumField }}
       </div>
       <template #footer>
         <Button label="View" icon="pi pi-check" text @click="submitSpaceUtil"/>
@@ -330,47 +335,47 @@
         </div>
       </div>
       <div class="p-fluid" v-if="marine !== null">
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">ID</label>
           <span> {{ marine.id }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">name</label>
           <span> {{ marine.name }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">achievements</label>
           <span> {{ marine.achievements }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">creationDate</label>
           <span> {{ marine.creationDate }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">starshipId</label>
           <span> {{ marine.starshipId }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">health</label>
           <span> {{ marine.health }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">weaponType</label>
           <span> {{ marine.weaponType }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">category</label>
           <span> {{ marine.category }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">category</label>
           <span> {{ marine.category }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">chapterName</label>
           <span> {{ marine.chapter.name }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">chapterWorld</label>
           <span> {{ marine.chapter.world }}</span>
         </div>
@@ -401,24 +406,24 @@ export default {
       getMarineId: null,
       spaceUtilsDialog: false,
       spaceUtilsOperations: [
-        {"label": "Минимум", "value":"min"},
-        {"label": "Максимум", "value":"max"},
-        {"label": "Сумма", "value":"sum"},
+        {"label": "Минимум", "value": "min"},
+        {"label": "Максимум", "value": "max"},
+        {"label": "Сумма", "value": "sum"},
       ],
       submittedSpaceUtils: false,
       minMaxOperation: false,
       spaceMarineFields: [
-        {"value":"name"},
-        {"value":"coordinatesX"},
-        {"value":"coordinatesY"},
-        {"value":"starshipId"},
-        {"value":"creationDate"},
-        {"value":"health"},
-        {"value":"achievements"},
-        {"value":"category"},
-        {"value":"weaponType"},
-        {"value":"chapterName"},
-        {"value":"chapterWorld"},
+        {"value": "name"},
+        {"value": "coordinatesX"},
+        {"value": "coordinatesY"},
+        {"value": "starshipId"},
+        {"value": "creationDate"},
+        {"value": "health"},
+        {"value": "achievements"},
+        {"value": "category"},
+        {"value": "weaponType"},
+        {"value": "chapterName"},
+        {"value": "chapterWorld"},
       ],
       selectedSpaceMarineField: null,
       selectedSpaceUtilOperation: null,
@@ -448,6 +453,7 @@ export default {
         {label: 'OUTOFSTOCK', value: 'outofstock'}
       ],
       lazyParams: {},
+      sumField: null
     }
   },
   created() {
@@ -469,22 +475,36 @@ export default {
         return group1.toUpperCase();
       })
     },
-    submitSpaceUtil(){
+    submitSpaceUtil() {
       let data = {
         "operation": this.selectedSpaceUtilOperation.value,
         "field": this.selectedSpaceMarineField.value
       }
-      // SpaceMarineService.getSpaceUtils(data)
-      //     .then((data) => {
-      //       this.submittedSpaceUtils = true;
-      //       this.minMaxOperation = !('sumHealth' in data.response.data);
-      //       this.$toast.add({severity:'success', summary: 'SpaceMarineUtils', detail: "Successfully get marines!", life: 3000});
-      //
-      //     })
-      //     .catch((err)=>{
-      //       this.submittedSpaceUtils = true;
-      //       this.$toast.add({severity:'error', summary: 'SpaceMarineUtils', detail: err.response.data, life: 3000});
-      //     })
+      SpaceMarineService.getSpaceUtils(data)
+          .then((data) => {
+                this.submittedSpaceUtils = true;
+                this.minMaxOperation = !('sumHealth' in data.data);
+                if (this.minMaxOperation)
+                  this.marine = data.data
+                else
+                  this.sumField = data.data.sumHealth
+                this.$toast.add({
+                  severity: 'success',
+                  summary: 'SpaceMarineUtils',
+                  detail: "Successfully get marines!",
+                  life: 3000
+                });
+
+              },
+              (err) => {
+                this.submittedSpaceUtils = false;
+                this.$toast.add({
+                  severity: 'error',
+                  summary: 'SpaceMarineUtils',
+                  detail: err.response.data,
+                  life: 3000
+                });
+              })
     },
     openSpaceUtils() {
       this.marine = null
@@ -524,13 +544,24 @@ export default {
       const reqParams = this.buildRequestParams(this.lazyParams)
       SpaceMarineService.getMarines(reqParams)
           .then((data) => {
-            this.marines = data.response.data
-            this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Successfully get marines!", life: 3000});
+                // console.log(data.data.)
+                this.marines = data.data.objects
+                this.$toast.add({
+                  severity: 'success',
+                  summary: 'SpaceMarine',
+                  detail: "Successfully get marines!",
+                  life: 3000
+                });
 
-          })
-          .catch((err)=>{
-            this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
-          })
+              },
+              (err) => {
+                this.$toast.add({
+                  severity: 'error',
+                  summary: 'SpaceMarine',
+                  detail: "Error when fetch data!",
+                  life: 3000
+                });
+              })
       console.log(reqParams);
     },
     onPage(event) {
@@ -560,41 +591,51 @@ export default {
     },
     getMarineById() {
       SpaceMarineService.getMarineById(this.getMarineId)
-          .then(() => {
-            this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Successfully got marine!", life: 3000});
+          .then((resp) => {
+            console.log(resp.data)
+            this.marine = resp.data
+            this.$toast.add({
+              severity: 'success',
+              summary: 'SpaceMarine',
+              detail: "Successfully got marine!",
+              life: 3000
+            });
 
           })
-          .catch((err)=>{
-            this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+          .catch((err) => {
+            this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
           })
     },
     hideDialog() {
       this.marineDialog = false;
       this.submitted = false;
     },
-    saveMarine() {
+    async saveMarine() {
+      console.log(this.marine)
+
       this.submitted = true;
       if (this.marine.name.trim()) {
         if (this.marine.id) {
           // this.marines[this.findIndexById(this.marine.id)] = this.marine;
-          SpaceMarineService.updateMarine(this.marine)
+          await SpaceMarineService.updateMarine(this.marine)
               .then(() => {
-                this.marines[this.findIndexById(this.marine.id)] = this.marine;
-          this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Marine Updated!", life: 3000});
-          })
-          .catch((err)=>{
-            this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
-          })
+                    this.marines[this.findIndexById(this.marine.id)] = this.marine;
+                    this.$toast.add({severity: 'success', summary: 'SpaceMarine', detail: "Marine Updated!", life: 3000});
+                  },
+                  (err) => {
+                    this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+                  })
         } else {
           // this.marines.push(this.marine);
-          SpaceMarineService.createMarine(this.marine)
+          await SpaceMarineService.createMarine(this.marine)
               .then(() => {
-                this.marines.push(this.marine);
-          this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Marine Created!", life: 3000});
-          })
-          .catch((err)=>{
-            this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
-          })
+                    this.marines.push(this.marine);
+
+                    this.$toast.add({severity: 'success', summary: 'SpaceMarine', detail: "Marine Created!", life: 3000});
+                  },
+                  (err) => {
+                    this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+                  })
         }
 
         this.marineDialog = false;
@@ -615,7 +656,7 @@ export default {
       // this.marines = this.marines.filter(val => val.id !== this.marine.id);
       // this.deleteMarineDialog = false;
       // this.marine = {};
-      SpaceMarineService.createMarine(this.marine)
+      SpaceMarineService.deleteMarine(this.marine.id)
           .then(() => {
             this.marines = this.marines.filter(val => val.id !== this.marine.id);
             this.deleteMarineDialog = false;

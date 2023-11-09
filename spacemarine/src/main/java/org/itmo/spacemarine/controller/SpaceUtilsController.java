@@ -7,10 +7,7 @@ import org.itmo.spacemarine.exception.BusinessException;
 import org.itmo.spacemarine.exception.ExceptionCode;
 import org.itmo.spacemarine.service.SpaceMarineService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +15,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/space-utils")
+@CrossOrigin(origins = "*", allowedHeaders = "*", exposedHeaders = "*")
 public class SpaceUtilsController {
 
     private final SpaceMarineService spaceMarineService;

@@ -5,7 +5,7 @@
       <Toolbar class="mb-4">
         <template #start>
           <Button label="New" icon="pi pi-plus" severity="success" class="mr-2" @click="openNew"/>
-          <Button label="Get By ID"  severity="danger" @click="openGetStarshipById"/>
+          <Button label="Get By ID" severity="danger" @click="openGetStarshipById"/>
         </template>
       </Toolbar>
       <div class="overflow-x-scroll h-auto w-12">
@@ -16,13 +16,13 @@
             </div>
           </template>
           <template #empty> No customers found.</template>
-          <Column field="id" header="ID" class="w-3" />
-          <Column field="name" header="Name" class="w-3" />
-          <Column field="width" header="Width" class="w-2" />
-          <Column field="height" header="Height" class="w-2" />
-          <Column :exportable="false" class="w-2" >
+          <Column field="id" header="ID" class="w-3"/>
+          <Column field="name" header="Name" class="w-3"/>
+          <Column field="width" header="Width" class="w-2"/>
+          <Column field="height" header="Height" class="w-2"/>
+          <Column :exportable="false" class="w-2">
             <template #body="slotProps">
-              <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editStarship(slotProps.data)"/>
+              <!--              <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editStarship(slotProps.data)"/>-->
               <Button icon="pi pi-trash" outlined rounded severity="danger"
                       @click="confirmDeleteStarship(slotProps.data)"/>
             </template>
@@ -74,19 +74,19 @@
         </div>
       </div>
       <div class="p-fluid" v-if="starship !== null">
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">ID</label>
           <span> {{ starship.id }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="id">Name</label>
           <span> {{ starship.name }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="width">Width</label>
           <span> {{ starship.width }}</span>
         </div>
-        <div class="field col">
+        <div class="field flex flex-column col">
           <label for="height">Height</label>
           <span> {{ starship.height }}</span>
         </div>
@@ -106,7 +106,7 @@ import StarshipService from '@/services/StarshipService';
 export default {
   data() {
     return {
-      starships: null,
+      starships: [],
       starshipDialog: false,
       deleteStarshipDialog: false,
       deleteStarshipsDialog: false,
@@ -123,12 +123,20 @@ export default {
     }
   },
   mounted() {
-    this.starships = StarshipService.getStarships()
+    StarshipService.getStarships().then(
+        (resp) => {
+          this.starships = resp.data
+          this.$toast.add({severity: 'success', summary: 'Starship', detail: "Successfully got starship!", life: 3000});
+        },
+        err => {
+          this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data, life: 3000});
+        }
+    )
   },
   methods: {
     openNew() {
       this.starship = StarshipService.getDefaultStarship();
-      this.starships = StarshipService.getStarships();
+      // this.starships = StarshipService.getStarships();
       this.selectedStarship = null;
       this.submitted = false;
       this.starshipDialog = true;
@@ -138,42 +146,47 @@ export default {
       this.getStarshipByIdDialog = true;
     },
     getStarshipById() {
-      // StarshipService.getStarshipById(this.getStarshipId)
-      //     .then(() => {
-      //       this.$toast.add({severity:'success', summary: 'Starship', detail: "Successfully got starship!", life: 3000});
-      //
-      //     })
-      //     .catch((err)=>{
-      //       this.$toast.add({severity:'error', summary: 'Starship', detail: err.response.data, life: 3000});
-      //     })
+      StarshipService.getStarshipById(this.getStarshipId)
+          .then((resp) => {
+            this.starship = resp.data
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Starship',
+              detail: "Successfully got starship!",
+              life: 3000
+            });
+
+          }, (err) => {
+            this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data, life: 3000});
+          })
     },
     hideDialog() {
       this.starshipDialog = false;
       this.submitted = false;
     },
-    saveStarship() {
+    async saveStarship() {
       this.submitted = true;
       if (this.starship.name.trim()) {
         if (this.starship.id) {
-          this.starships[this.findIndexById(this.starship.id)] = this.starship;
-          // StarshipService.updateStarship(this.starship)
-          //     .then(() => {
-          //       this.starships[this.findIndexById(this.starship.id)] = this.starship;
-          // this.$toast.add({severity:'success', summary: 'Starship', detail: "Starship Updated!", life: 3000});
-          // })
-          // .catch((err)=>{
-          //   this.$toast.add({severity:'error', summary: 'Starship', detail: err.response.data, life: 3000});
-          // })
+          // this.starships[this.findIndexById(this.starship.id)] = this.starship;
+          await StarshipService.updateStarship(this.starship)
+              .then(() => {
+                this.starships[this.findIndexById(this.starship.id)] = this.starship;
+                this.$toast.add({severity: 'success', summary: 'Starship', detail: "Starship Updated!", life: 3000});
+              }, (err) => {
+                this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data, life: 3000});
+              })
         } else {
-          this.starships.push(this.starship);
-          // StarshipService.createStarship(this.starship)
-          //     .then(() => {
-          //       this.starships.push(this.starship);
-          // this.$toast.add({severity:'success', summary: 'Starship', detail: "Starship Created!", life: 3000});
-          // })
-          // .catch((err)=>{
-          //   this.$toast.add({severity:'error', summary: 'Starship', detail: err.response.data, life: 3000});
-          // })
+          // this.starships.push(this.starship);
+          await StarshipService.createStarship(this.starship)
+              .then(() => {
+                console.log(this.starship)
+                this.starships.push(this.starship);
+                this.$toast.add({severity: 'success', summary: 'Starship', detail: "Starship Created!", life: 3000});
+              }, (err) => {
+                console.log(err)
+                this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data, life: 3000});
+              })
         }
 
         this.starshipDialog = false;
@@ -182,8 +195,8 @@ export default {
     },
     editStarship(starship) {
       this.starship = {...starship};
-      this.starships = StarshipService.getStarships();
-      this.selectedStarship = this.starships.find((x) => x.id === this.starship.starshipId);
+      // this.starships = StarshipService.getStarships();
+      // this.selectedStarship = this.starships.find((x) => x.id === this.starship.starshipId);
       this.starshipDialog = true;
     },
     confirmDeleteStarship(starship) {
@@ -193,15 +206,15 @@ export default {
     deleteStarship() {
       this.starships = this.starships.filter(val => val.id !== this.starship.id);
       this.deleteStarshipDialog = false;
+      StarshipService.deleteStarship(this.starship.id)
+          .then(() => {
+                this.starships = this.starships.filter(val => val.id !== this.starship.id);
+                this.$toast.add({severity: 'success', summary: 'Starship', detail: "Starship Deleted!", life: 3000});
+              },
+              (err) => {
+                this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data, life: 3000});
+              })
       this.starship = {};
-      // StarshipService.createStarship(this.starship)
-      //     .then(() => {
-      //       this.starships = this.starships.filter(val => val.id !== this.starship.id);
-      //       this.$toast.add({severity: 'success', summary: 'Starship', detail: "Starship Deleted!", life: 3000});
-      //     })
-      //     .catch((err) => {
-      //       this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data, life: 3000});
-      //     })
     },
     findIndexById(id) {
       let index = -1;

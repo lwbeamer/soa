@@ -14,7 +14,7 @@ class SpaceMarineService {
                 "x": null,
                 "y": null
             },
-            "creationDate": "2023-10-11T17:25:59.248Z",
+            "creationDate": null,
             "health": null,
             "achievements": null,
             "category": null,

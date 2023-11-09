@@ -4,34 +4,24 @@ import moment from "moment";
 
 
 class StarshipService {
-
+    STARSHIP_FROM_MARINE_API=process.env.VUE_APP_MARINE_API
 
     getStarships() {
-        // return axios.get(`/api/starships/`, {headers: authHeader()})
-        return [
-            {
-                "id": 1,
-                "name": "Starship Kosmos",
-                "width": 5,
-                "height": 35
-            },
-            {
-                "id": 2,
-                "name": "Starship Meteor",
-                "width": 2,
-                "height": 100
-            }
-        ]
+        return axios.get(`${this.STARSHIP_FROM_MARINE_API}/starships`, {headers: authHeader()})
     }
 
     getStarshipById(id){
-        return axios.get(`/api/starships/${id}`, {headers: authHeader()})
+        return axios.get(`${this.STARSHIP_FROM_MARINE_API}/starships/${id}`, {headers: authHeader()})
     }
     updateStarship(body){
-        return axios.put(`/api/starships/${body.id}`, body, {headers: authHeader()})
+        return axios.put(`${this.STARSHIP_FROM_MARINE_API}/starships/${body.id}`, body, {headers: authHeader()})
     }
     deleteStarship(id){
-        return axios.delete(`/api/starships/${id}`, {headers: authHeader()})
+        return axios.delete(`${this.STARSHIP_FROM_MARINE_API}/starships/${id}`, {headers: authHeader()})
+    }
+    createStarship(body){
+        return axios.post(`${this.STARSHIP_FROM_MARINE_API}/starships`, body, {headers: authHeader()})
+
     }
 
     getDefaultStarship() {

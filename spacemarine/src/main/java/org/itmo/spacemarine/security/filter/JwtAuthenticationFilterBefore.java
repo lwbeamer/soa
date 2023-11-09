@@ -30,6 +30,11 @@ import java.util.Optional;
 @Component
 public class JwtAuthenticationFilterBefore extends OncePerRequestFilter {
 
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//        return "OPTIONS".equals(request.getMethod());
+//    }
+
     private static final String BEARER_PREFIX = "Bearer";
 
     @Value("${jwt.public-key}")
@@ -38,6 +43,8 @@ public class JwtAuthenticationFilterBefore extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
+            log.info("ПРИШЕЛ ЗАПРОС С МЕТОДОМ  " + request.getMethod());
+            if (request.getMethod().equals("OPTIONS")) return;
             Optional<String> optionalToken = extractAccessToken(request);
             if (optionalToken.isPresent() && StringUtils.hasLength(optionalToken.get())) {
                 try {
