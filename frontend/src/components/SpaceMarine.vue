@@ -446,20 +446,22 @@ export default {
         {label: 'INSTOCK', value: 'instock'},
         {label: 'LOWSTOCK', value: 'lowstock'},
         {label: 'OUTOFSTOCK', value: 'outofstock'}
-      ]
+      ],
+      lazyParams: {},
     }
   },
   created() {
     this.initFilters();
   },
   mounted() {
-    this.marines = SpaceMarineService.getMarines()
     this.totalRecords = 10;
     this.lazyParams = {
-      rows: this.$refs.dt.rows,
+      // rows: this.$refs.dt.rows,
+      rows: 10,
       multiSortMeta: null,
       filters: this.filters
     };
+    this.loadLazyData()
   },
   methods: {
     convertFieldName(fieldName) {
@@ -491,8 +493,8 @@ export default {
 
     buildRequestParams(data) {
       const queryParams = [];
-
-      queryParams.push(`pageSize=${this.lazyParams.rows}`);
+      // Params begin with '?' char
+      queryParams.push(`?pageSize=${this.lazyParams.rows}`);
       queryParams.push(`page=${this.currentPage}`);
 
       // Process filters
@@ -520,15 +522,15 @@ export default {
     loadLazyData() {
       console.log(this.lazyParams);
       const reqParams = this.buildRequestParams(this.lazyParams)
-      // SpaceMarineService.getMarines(reqParams)
-      //     .then((data) => {
-      //       this.marines = data.response.data
-      //       this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Successfully get marines!", life: 3000});
-      //
-      //     })
-      //     .catch((err)=>{
-      //       this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
-      //     })
+      SpaceMarineService.getMarines(reqParams)
+          .then((data) => {
+            this.marines = data.response.data
+            this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Successfully get marines!", life: 3000});
+
+          })
+          .catch((err)=>{
+            this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+          })
       console.log(reqParams);
     },
     onPage(event) {
@@ -557,14 +559,14 @@ export default {
       this.getMarineByIdDialog = true;
     },
     getMarineById() {
-      // SpaceMarineService.getMarineById(this.getMarineId)
-      //     .then(() => {
-      //       this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Successfully got marine!", life: 3000});
-      //
-      //     })
-      //     .catch((err)=>{
-      //       this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
-      //     })
+      SpaceMarineService.getMarineById(this.getMarineId)
+          .then(() => {
+            this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Successfully got marine!", life: 3000});
+
+          })
+          .catch((err)=>{
+            this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+          })
     },
     hideDialog() {
       this.marineDialog = false;
@@ -574,25 +576,25 @@ export default {
       this.submitted = true;
       if (this.marine.name.trim()) {
         if (this.marine.id) {
-          this.marines[this.findIndexById(this.marine.id)] = this.marine;
-          // SpaceMarineService.updateMarine(this.marine)
-          //     .then(() => {
-          //       this.marines[this.findIndexById(this.marine.id)] = this.marine;
-          // this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Marine Updated!", life: 3000});
-          // })
-          // .catch((err)=>{
-          //   this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
-          // })
+          // this.marines[this.findIndexById(this.marine.id)] = this.marine;
+          SpaceMarineService.updateMarine(this.marine)
+              .then(() => {
+                this.marines[this.findIndexById(this.marine.id)] = this.marine;
+          this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Marine Updated!", life: 3000});
+          })
+          .catch((err)=>{
+            this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+          })
         } else {
-          this.marines.push(this.marine);
-          // SpaceMarineService.createMarine(this.marine)
-          //     .then(() => {
-          //       this.marines.push(this.marine);
-          // this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Marine Created!", life: 3000});
-          // })
-          // .catch((err)=>{
-          //   this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
-          // })
+          // this.marines.push(this.marine);
+          SpaceMarineService.createMarine(this.marine)
+              .then(() => {
+                this.marines.push(this.marine);
+          this.$toast.add({severity:'success', summary: 'SpaceMarine', detail: "Marine Created!", life: 3000});
+          })
+          .catch((err)=>{
+            this.$toast.add({severity:'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+          })
         }
 
         this.marineDialog = false;
@@ -610,17 +612,19 @@ export default {
       this.deleteMarineDialog = true;
     },
     deleteMarine() {
-      this.marines = this.marines.filter(val => val.id !== this.marine.id);
-      this.deleteMarineDialog = false;
-      this.marine = {};
-      // SpaceMarineService.createMarine(this.marine)
-      //     .then(() => {
-      //       this.marines = this.marines.filter(val => val.id !== this.marine.id);
-      //       this.$toast.add({severity: 'success', summary: 'SpaceMarine', detail: "Marine Deleted!", life: 3000});
-      //     })
-      //     .catch((err) => {
-      //       this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
-      //     })
+      // this.marines = this.marines.filter(val => val.id !== this.marine.id);
+      // this.deleteMarineDialog = false;
+      // this.marine = {};
+      SpaceMarineService.createMarine(this.marine)
+          .then(() => {
+            this.marines = this.marines.filter(val => val.id !== this.marine.id);
+            this.deleteMarineDialog = false;
+            this.marine = {};
+            this.$toast.add({severity: 'success', summary: 'SpaceMarine', detail: "Marine Deleted!", life: 3000});
+          })
+          .catch((err) => {
+            this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+          })
     },
     findIndexById(id) {
       let index = -1;
