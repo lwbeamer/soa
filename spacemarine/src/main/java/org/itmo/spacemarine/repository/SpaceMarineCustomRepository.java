@@ -9,6 +9,7 @@ import org.itmo.spacemarine.exception.ExceptionCode;
 import org.itmo.spacemarine.util.FilterParams;
 import org.itmo.spacemarine.util.Page;
 import org.itmo.spacemarine.util.SortParams;
+import org.itmo.spacemarine.util.SpaceMarineFields;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -17,10 +18,13 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -84,27 +88,25 @@ public class SpaceMarineCustomRepository {
 
         Page<SpaceMarine> ret = new Page<>();
 
-//        if (page != null && size != null) {
-            typedQuery.setFirstResult((page - 1) * size);
-            typedQuery.setMaxResults(size);
+        typedQuery.setFirstResult((page - 1) * size);
+        typedQuery.setMaxResults(size);
 
 
-            long totalRecords;
-            if (!predicates.isEmpty()) {
-                Query queryTotal = entityManager.createQuery("select count(*) from SpaceMarine");
-                totalRecords = (long) queryTotal.getSingleResult();
-            } else {
-                CriteriaBuilder qb = entityManager.getCriteriaBuilder();
-                CriteriaQuery<Long> cq = qb.createQuery(Long.class);
-                cq.select(qb.count(cq.from(SpaceMarine.class)));
-                cq.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
-                totalRecords = entityManager.createQuery(cq).getSingleResult();
-            }
+        long totalRecords;
+        if (!predicates.isEmpty()) {
+            Query queryTotal = entityManager.createQuery("select count(*) from SpaceMarine");
+            totalRecords = (long) queryTotal.getSingleResult();
+        } else {
+            CriteriaBuilder qb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+            cq.select(qb.count(cq.from(SpaceMarine.class)));
+            cq.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+            totalRecords = entityManager.createQuery(cq).getSingleResult();
+        }
 
-            ret.setPage(page);
-            ret.setPageSize(size);
-            ret.setTotalPages((int) Math.ceil(((double) totalRecords) / size));
-//        }
+        ret.setPage(page);
+        ret.setPageSize(size);
+        ret.setTotalPages((int) Math.ceil(((double) totalRecords) / size));
 
         ret.setObjects(typedQuery.getResultList());
 
@@ -122,4 +124,69 @@ public class SpaceMarineCustomRepository {
             throw new BusinessException(ExceptionCode.InvalidRequest, "Значения weaponType или category не могут быть произвольными!");
         }
     }
+
+//    public SpaceMarine findMaxByField(SpaceMarineFields fullField) {
+//        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+//        CriteriaQuery<Object> subQuery = criteriaBuilder.createQuery(Object.class);
+//        Root<SpaceMarine> subRoot = subQuery.from(SpaceMarine.class);
+//
+//        Expression<Object> expression;
+//
+//        if (fullField.getNestedField() == null) {
+//            expression = subRoot.get(fullField.getMainField());
+//        } else {
+//            expression = subRoot.get(fullField.getMainField()).get(fullField.getNestedField());
+//        }
+//
+//        subQuery.select(expression);
+//
+//        List<Object> results = entityManager.createQuery(subQuery).getResultList();
+//
+//        if (results.isEmpty()) {
+//            return null;
+//        }
+//
+//        Object maxResult = Collections.max(results, Comparator.nullsLast(Comparator.naturalOrder()));
+//
+//        CriteriaQuery<SpaceMarine> criteriaQuery = criteriaBuilder.createQuery(SpaceMarine.class);
+//        Root<SpaceMarine> root = criteriaQuery.from(SpaceMarine.class);
+//
+//        if (fullField.getNestedField() == null) {
+//            criteriaQuery.select(root)
+//                    .where(criteriaBuilder.equal(root.get(fullField.getMainField()), maxResult));
+//        } else {
+//            criteriaQuery.select(root)
+//                    .where(criteriaBuilder.equal(root.get(fullField.getMainField()).get(fullField.getNestedField()), maxResult));
+//        }
+//
+//        TypedQuery<SpaceMarine> query = entityManager.createQuery(criteriaQuery);
+//        query.setMaxResults(1);
+//
+//        List<SpaceMarine> result = query.getResultList();
+//        return result.isEmpty() ? null : result.get(0);
+//    }
+//
+//    public SpaceMarine findMinByField(SpaceMarineFields fullField) {
+//        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+//        CriteriaQuery<SpaceMarine> criteriaQuery = criteriaBuilder.createQuery(SpaceMarine.class);
+//        Root<SpaceMarine> root = criteriaQuery.from(SpaceMarine.class);
+//
+//        Expression<Integer> minExpression;
+//
+//        if (fullField.getNestedField() == null) {
+//            minExpression = criteriaBuilder.min(root.get(fullField.getMainField()));
+//            criteriaQuery.select(root)
+//                    .where(criteriaBuilder.equal(root.get(fullField.getMainField()), minExpression));
+//        } else {
+//            minExpression = criteriaBuilder.min(root.get(fullField.getMainField()).get(fullField.getNestedField()));
+//            criteriaQuery.select(root)
+//                    .where(criteriaBuilder.equal(root.get(fullField.getNestedField()).get(fullField.getNestedField()), minExpression));
+//        }
+//
+//        TypedQuery<SpaceMarine> query = entityManager.createQuery(criteriaQuery);
+//        query.setMaxResults(1);
+//
+//        List<SpaceMarine> result = query.getResultList();
+//        return result.isEmpty() ? null : result.get(0);
+//    }
 }

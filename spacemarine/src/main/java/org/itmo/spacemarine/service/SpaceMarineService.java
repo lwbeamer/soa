@@ -145,4 +145,55 @@ public class SpaceMarineService {
         if (spaceMarineOptional.isEmpty()) throw new BusinessException(ExceptionCode.SpaceMarineNotFound, "SpaceMarine с таким id не найден!");
         spaceMarineRepository.delete(spaceMarineOptional.get());
     }
+
+    public SpaceMarineResponseDto getWithMaxField(String field) {
+        SpaceMarineFields fullField = SpaceMarineFields.valueOfQueryParam(field);
+        if (fullField == null)
+            throw new BusinessException(ExceptionCode.InvalidRequest, "Указанного поля не существует!");
+
+        int page = 1, pageSize = 1;
+
+        List<FilterParams> filterParams = new ArrayList<>();
+        List<SortParams> sortParams = new ArrayList<>();
+
+        sortParams.add(SortParams.builder()
+                .mainField(fullField.getMainField())
+                .nestedField(fullField.getNestedField())
+                .isDescOrder(true)
+                .build());
+
+
+        return getSpaceMarineResponseDto(page, pageSize, filterParams, sortParams);
+    }
+
+    public SpaceMarineResponseDto getWithMinField(String field) {
+        SpaceMarineFields fullField = SpaceMarineFields.valueOfQueryParam(field);
+        if (fullField == null)
+            throw new BusinessException(ExceptionCode.InvalidRequest, "Указанного поля не существует!");
+
+        int page = 1, pageSize = 1;
+
+        List<FilterParams> filterParams = new ArrayList<>();
+        List<SortParams> sortParams = new ArrayList<>();
+
+        sortParams.add(SortParams.builder()
+                        .mainField(fullField.getMainField())
+                        .nestedField(fullField.getNestedField())
+                        .isDescOrder(false)
+                        .build());
+
+        return getSpaceMarineResponseDto(page, pageSize, filterParams, sortParams);
+    }
+
+    private SpaceMarineResponseDto getSpaceMarineResponseDto(int page, int pageSize, List<FilterParams> filterParams, List<SortParams> sortParams) {
+        Page<SpaceMarine> result = spaceMarineCustomRepository.getSortedAndFilteredPage(sortParams, filterParams, page, pageSize);
+
+        if (result == null || result.getObjects() == null || result.getObjects().isEmpty())
+            throw new BusinessException(ExceptionCode.SpaceMarineNotFound, "Сущность не найдена!");
+        return spaceMarineConverter.convertFromSpaceMarineToResponse(result.getObjects().get(0));
+    }
+
+    public Long getHealthSum() {
+        return spaceMarineRepository.getHealthSum();
+    }
 }
