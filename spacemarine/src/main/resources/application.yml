@@ -23,5 +23,13 @@ server:
     context-path: /itmo/api
   port: 8089
 
+space-marine:
+  constraints:
+    health-min-value: 0
+    x-max-value: 872
+    y-max-value: 110
+
+
+
 jwt:
   public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3SjfZDG9O2Wa7UwVrG2lFHFPr2PVAby50NhCmfstFvR8+MgimBSndRMr7eEYjkbRbT7fLVqJxH3ORunfaMJUZYeAwjKDjDMaO8Ye1SA0LCOejK0PJaHOtG7vlwv9vN1TPnEhiWZulrcfnPRI5eshf25ZEfTNUvwdlqAJ3LrKjnl66OsiZqkcujKkp+VSRO/TbEigOG/z6R+CcXr5ue0FUbawyrTy5NcYzxtKTOEpF6/572EXRbAOkOUKiJFJtmaBB4kiuw6Z2U5Cw9Ii+ntdhW45SPrBK+Eg78ag9YI+fRhJDgJnx2YyVbOSw5SXQj81uNGW5Sc0tV/+DDMbMh5T7wIDAQAB

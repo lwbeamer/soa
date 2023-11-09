@@ -8,6 +8,7 @@ import org.itmo.spacemarine.entity.SpaceMarine;
 import org.itmo.spacemarine.exception.BusinessException;
 import org.itmo.spacemarine.exception.ExceptionCode;
 import org.itmo.spacemarine.service.SpaceMarineService;
+import org.itmo.spacemarine.util.FieldsValidator;
 import org.itmo.spacemarine.util.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 public class SpaceMarineController {
 
     private final SpaceMarineService spaceMarineService;
+
+    private final FieldsValidator fieldsValidator;
 
     @GetMapping
     public Page<SpaceMarine> getAll(HttpServletRequest request) {
@@ -45,6 +48,8 @@ public class SpaceMarineController {
         } catch (NumberFormatException ex){
             throw new BusinessException(ExceptionCode.InvalidRequest, "Некорректрые параметры запроса!");
         }
+
+        fieldsValidator.validateUpdateRequest(requestDto);
         spaceMarineService.updateSpaceMarine(longId, requestDto);
     }
 
@@ -61,6 +66,7 @@ public class SpaceMarineController {
 
     @PostMapping
     public void addSpaceMarine(@RequestBody SpaceMarineCreateRequestDto requestDto) {
+        fieldsValidator.validateCreateRequest(requestDto);
         spaceMarineService.addNewMarine(requestDto);
     }
 }

@@ -33,7 +33,7 @@ public class Coordinates {
     @Column(name = "x", nullable = false)
     private Long x;
 
-    @Min(110)
-    @Column(name = "y", nullable = false)
+    @Max(110)
+    @Column(name = "y")
     private Long y;
 }

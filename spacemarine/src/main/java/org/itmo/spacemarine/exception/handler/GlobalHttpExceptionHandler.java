@@ -1,6 +1,7 @@
 package org.itmo.spacemarine.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.PropertyValueException;
 import org.itmo.spacemarine.dto.Error;
 import org.itmo.spacemarine.exception.AccessForbiddenException;
 import org.itmo.spacemarine.exception.BusinessException;
@@ -42,6 +43,19 @@ public class GlobalHttpExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(Error.builder()
                         .code(HttpStatus.UNAUTHORIZED.value())
                         .message(message)
+                        .timestamp(Instant.now())
+                        .build());
+    }
+
+    @ExceptionHandler(PropertyValueException.class)
+    public ResponseEntity<Error> handlePropertyValueException(PropertyValueException ex) {
+        String message = ex.getMessage();
+        log.info(message, ex);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Error.builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .message("Неверные данные в теле запроса: " + message)
                         .timestamp(Instant.now())
                         .build());
     }
