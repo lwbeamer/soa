@@ -1,5 +1,5 @@
 import axios from "axios";
-import * as process from "process";
+
 
 class AuthService{
     AUTH_API=  process.env.VUE_APP_AUTH_API

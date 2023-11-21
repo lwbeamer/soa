@@ -44,7 +44,7 @@ public class FieldsValidator {
     }
 
     public void checkCoordinateY(Long y) {
-        if (y < yMaxValue)
+        if (y > yMaxValue)
             throw new BusinessException(ExceptionCode.RequestValidationFailed, "Максимальное значение y = " + yMaxValue);
     }
 }

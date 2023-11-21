@@ -16,7 +16,7 @@ import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
 public class StarshipRestClient {
-    private static final String SPACE_MARINE_BASE_URL = "http://localhost:9998/space-marines";
+    private static final String SPACE_MARINE_BASE_URL = "http://localhost:10121/spacemarine/space-marines";
 
     public SpaceMarineResponseDto getSpaceMarineById(long id, String token) {
         Client client = ClientBuilder.newClient();
