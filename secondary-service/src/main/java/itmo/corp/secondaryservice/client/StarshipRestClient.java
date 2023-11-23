@@ -1,5 +1,6 @@
 package itmo.corp.secondaryservice.client;
 
+import itmo.corp.secondaryservice.config.AppConfig;
 import itmo.corp.secondaryservice.dto.Error;
 import itmo.corp.secondaryservice.dto.Page;
 import itmo.corp.secondaryservice.dto.SpaceMarine;
@@ -13,13 +14,48 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.SneakyThrows;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.KeyStore;
 
 @ApplicationScoped
 public class StarshipRestClient {
-    private static final String SPACE_MARINE_BASE_URL = "http://localhost:10121/spacemarine/space-marines";
+    private static final String SPACE_MARINE_BASE_URL = AppConfig.getProperty("spacemarine.api");
 
+    public static SSLContext createSSLContext(String truststorePath, String truststorePassword) throws Exception {
+        KeyStore truststore = KeyStore.getInstance(AppConfig.getProperty("truststore.type"));
+
+        try (InputStream truststoreInput = new FileInputStream(truststorePath)) {
+            truststore.load(truststoreInput, truststorePassword.toCharArray());
+        }
+
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        tmf.init(truststore);
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, tmf.getTrustManagers(), null);
+
+        return sslContext;
+    }
+
+    public static Client createSSLClient() throws Exception {
+        SSLContext sslContext = createSSLContext(
+                AppConfig.getProperty("truststore.path"),
+                AppConfig.getProperty("truststore.key")
+        );
+
+        return ClientBuilder.newBuilder()
+                .sslContext(sslContext)
+                .build();
+    }
+
+    @SneakyThrows
     public SpaceMarineResponseDto getSpaceMarineById(long id, String token) {
-        Client client = ClientBuilder.newClient();
+        Client client = createSSLClient();
 
         Response response = null;
         SpaceMarineResponseDto responseData = null;
@@ -32,6 +68,7 @@ public class StarshipRestClient {
 
             if (response.getStatus() == 200) {
                 responseData = response.readEntity(SpaceMarineResponseDto.class);
+                System.out.println(responseData);
             }
 
             response.close();
@@ -48,8 +85,9 @@ public class StarshipRestClient {
         return responseData;
     }
 
+    @SneakyThrows
     public Error updateSpaceMarineRequest(long id, SpaceMarineUpdateDto requestData, String token) {
-        Client client = ClientBuilder.newClient();
+        Client client = createSSLClient();
         Error error = null;
 
         Response response = null;
@@ -79,8 +117,9 @@ public class StarshipRestClient {
         return error;
     }
 
+    @SneakyThrows
     public Page<SpaceMarine> getAllSpaceMarinesInStarship(long starshipId, String token) {
-        Client client = ClientBuilder.newClient();
+        Client client = createSSLClient();
 
         Response response = null;
         Page<SpaceMarine> responseData = null;

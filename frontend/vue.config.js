@@ -3,7 +3,8 @@ module.exports = {
   transpileDependencies: true,
   publicPath: process.env.NODE_ENV === 'prod' ? '/~s312200/soa-frontend/' : '/',
   devServer: {
-    port: 8080,
+    https: true,
+    port: 8443,
     hot: true,
     liveReload: true,
     proxy: {

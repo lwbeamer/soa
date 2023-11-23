@@ -5,6 +5,7 @@ import moment from "moment";
 
 class StarshipService {
     STARSHIP_FROM_MARINE_API=process.env.VUE_APP_MARINE_API
+    STARSHIP_API = process.env.VUE_APP_STARSHIP_API
 
     getStarships() {
         return axios.get(`${this.STARSHIP_FROM_MARINE_API}/starships`, {headers: authHeader()})
@@ -22,6 +23,14 @@ class StarshipService {
     createStarship(body){
         return axios.post(`${this.STARSHIP_FROM_MARINE_API}/starships`, body, {headers: authHeader()})
 
+    }
+
+    loadMarineOnStarship(starshipId, marineId) {
+        return axios.put(`${this.STARSHIP_API}/${starshipId}/load/${marineId}`, {}, {headers: authHeader()})
+    }
+
+    unloadMarinesFromStarship(starshipId) {
+        return axios.put(`${this.STARSHIP_API}/${starshipId}/unload-all`, {},{headers: authHeader()})
     }
 
     getDefaultStarship() {

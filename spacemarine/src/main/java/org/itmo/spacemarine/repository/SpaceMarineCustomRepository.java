@@ -107,7 +107,6 @@ public class SpaceMarineCustomRepository {
         ret.setPage(page);
         ret.setPageSize(size);
         ret.setTotalPages((int) Math.ceil(((double) totalRecords) / size));
-
         ret.setObjects(typedQuery.getResultList());
 
         return ret;

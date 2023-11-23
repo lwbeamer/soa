@@ -9,9 +9,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        generate_statistics: true
+        generate_statistics: false
+
 server:
   port: ${AUTH_SERVICE_PORT}
+  ssl:
+    key-store: classpath:keystore.jks
+    key-store-password: changeit
+    key-store-type: pkcs12
+    key-alias: s1as
+#    key-password: password

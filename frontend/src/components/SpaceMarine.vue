@@ -44,7 +44,7 @@
               <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by name"/>
             </template>
           </Column>
-          <Column field="starshipId" header="Starship ID" sortable style="min-width:16rem"
+          <Column field="starship.id" header="Starship ID" sortable style="min-width:16rem"
                   :showFilterMatchModes="false" :show-filter-operator="false">
             <template #filter="{ filterModel }">
               <InputText v-model="filterModel.value" type="text" class="p-column-filter"
@@ -433,7 +433,9 @@ export default {
           "x": 1,
           "y": 1
         },
-        "starshipId": 2,
+        "starship": {
+          "id": 2
+        },
         "creationDate": "2023-10-11T17:25:59.248Z",
         "health": null,
         "achievements": "string",
@@ -460,10 +462,9 @@ export default {
     this.initFilters();
   },
   mounted() {
-    this.totalRecords = 10;
     this.lazyParams = {
-      // rows: this.$refs.dt.rows,
-      rows: 10,
+      rows: this.$refs.dt.rows,
+      // rows: 10,
       multiSortMeta: null,
       filters: this.filters
     };
@@ -501,7 +502,7 @@ export default {
                 this.$toast.add({
                   severity: 'error',
                   summary: 'SpaceMarineUtils',
-                  detail: err.response.data,
+                  detail: err.response.data.message,
                   life: 3000
                 });
               })
@@ -533,7 +534,7 @@ export default {
       if (data.multiSortMeta && Array.isArray(data.multiSortMeta)) {
         data.multiSortMeta.forEach((sortMeta) => {
           const sortField = this.convertFieldName(sortMeta.field).replace('.', '');
-          const sortOrder = sortMeta.order === -1 ? 'DESC' : 'ASC';
+          const sortOrder = sortMeta.order === -1 ? ' DESC' : ' ';
           queryParams.push(`sort=${sortField}${sortOrder}`);
         });
       }
@@ -546,6 +547,8 @@ export default {
           .then((data) => {
                 // console.log(data.data.)
                 this.marines = data.data.objects
+                this.totalRecords = data.data.totalPages * data.data.pageSize
+
                 this.$toast.add({
                   severity: 'success',
                   summary: 'SpaceMarine',
@@ -603,7 +606,7 @@ export default {
 
           })
           .catch((err) => {
-            this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+            this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data.message, life: 3000});
           })
     },
     hideDialog() {
@@ -623,7 +626,7 @@ export default {
                     this.$toast.add({severity: 'success', summary: 'SpaceMarine', detail: "Marine Updated!", life: 3000});
                   },
                   (err) => {
-                    this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+                    this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data.message, life: 3000});
                   })
         } else {
           // this.marines.push(this.marine);
@@ -634,7 +637,7 @@ export default {
                     this.$toast.add({severity: 'success', summary: 'SpaceMarine', detail: "Marine Created!", life: 3000});
                   },
                   (err) => {
-                    this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+                    this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data.message, life: 3000});
                   })
         }
 
@@ -664,7 +667,7 @@ export default {
             this.$toast.add({severity: 'success', summary: 'SpaceMarine', detail: "Marine Deleted!", life: 3000});
           })
           .catch((err) => {
-            this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data, life: 3000});
+            this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data.message, life: 3000});
           })
     },
     findIndexById(id) {
@@ -699,7 +702,7 @@ export default {
         },
         health: {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]},
         creationDate: {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]},
-        starshipId: {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]},
+        'starship.id': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]},
         'chapter.name': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.EQUALS}]},
         'chapter.world': {
           operator: FilterOperator.AND,
@@ -712,6 +715,9 @@ export default {
 </script>
 
 <style scoped>
+.field > label {
+  font-weight: 800;
+}
 
 video {
   width: 50vw;

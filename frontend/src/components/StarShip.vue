@@ -5,7 +5,9 @@
       <Toolbar class="mb-4">
         <template #start>
           <Button label="New" icon="pi pi-plus" severity="success" class="mr-2" @click="openNew"/>
-          <Button label="Get By ID" severity="danger" @click="openGetStarshipById"/>
+          <Button label="Get By ID" severity="danger" class="mr-2" @click="openGetStarshipById"/>
+          <Button label="Load Marine" severity="danger" class="mr-2" @click="openLoadMarineOnStarship"/>
+          <Button label="Unload Marines" severity="danger" @click="openUnloadMarines"/>
         </template>
       </Toolbar>
       <div class="overflow-x-scroll h-auto w-12">
@@ -95,6 +97,82 @@
         <Button label="View" icon="pi pi-check" text @click="getStarshipById"/>
       </template>
     </Dialog>
+
+    <Dialog v-model:visible="loadMarineOnStarshipDialog" :style="{width: '450px'}" header="Load Marine on Starship" :modal="true">
+      <div class="p-fluid">
+        <div class="field col">
+          <label for="id">Starship ID</label>
+          <InputNumber id="id" v-model="getStarshipId" integeronly/>
+        </div>
+        <div class="field col">
+          <label for="id">Marine ID</label>
+          <InputNumber id="id" v-model="getMarineId" integeronly/>
+        </div>
+      </div>
+      <div class="p-fluid" v-if="marine !== null">
+        <div class="field flex flex-column col">
+          <label for="id">ID</label>
+          <span> {{ marine.id }}</span>
+        </div>
+        <div class="field flex flex-column col">
+          <label for="id">name</label>
+          <span> {{ marine.name }}</span>
+        </div>
+        <div class="field flex flex-column col">
+          <label for="id">achievements</label>
+          <span> {{ marine.achievements }}</span>
+        </div>
+        <div class="field flex flex-column col">
+          <label for="id">creationDate</label>
+          <span> {{ marine.creationDate }}</span>
+        </div>
+        <div class="field flex flex-column col">
+          <label for="id">starshipId</label>
+          <span> {{ marine.starshipId }}</span>
+        </div>
+        <div class="field flex flex-column col">
+          <label for="id">health</label>
+          <span> {{ marine.health }}</span>
+        </div>
+        <div class="field flex flex-column col">
+          <label for="id">weaponType</label>
+          <span> {{ marine.weaponType }}</span>
+        </div>
+        <div class="field flex flex-column col">
+          <label for="id">category</label>
+          <span> {{ marine.category }}</span>
+        </div>
+        <div class="field flex flex-column col">
+          <label for="id">category</label>
+          <span> {{ marine.category }}</span>
+        </div>
+        <div class="field flex flex-column col">
+          <label for="id">chapterName</label>
+          <span> {{ marine.chapter.name }}</span>
+        </div>
+        <div class="field flex flex-column col">
+          <label for="id">chapterWorld</label>
+          <span> {{ marine.chapter.world }}</span>
+        </div>
+      </div>
+      <template #footer>
+        <Button label="Load" icon="pi pi-check" text @click="loadMarineOnStarshipEvent"/>
+      </template>
+    </Dialog>
+
+    <Dialog v-model:visible="unloadMarinesDialog" :style="{width: '450px'}" header="Unload Marines from Starship" :modal="true">
+      <div class="p-fluid">
+        <div class="field col">
+          <label for="id">Starship ID</label>
+          <InputNumber id="id" v-model="getStarshipId" integeronly/>
+        </div>
+      </div>
+      <template #footer>
+        <Button label="Unload" icon="pi pi-check" text @click="unloadMarinesEvent"/>
+      </template>
+    </Dialog>
+
+
   </div>
 
 
@@ -111,7 +189,11 @@ export default {
       deleteStarshipDialog: false,
       deleteStarshipsDialog: false,
       getStarshipByIdDialog: false,
+      loadMarineOnStarshipDialog: false,
+      unloadMarinesDialog: false,
       getStarshipId: null,
+      getMarineId: null,
+      marine: null,
       starship: {
         "id": null,
         "name": null,
@@ -129,11 +211,18 @@ export default {
           this.$toast.add({severity: 'success', summary: 'Starship', detail: "Successfully got starship!", life: 3000});
         },
         err => {
-          this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data, life: 3000});
+          this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data.message, life: 3000});
         }
     )
   },
   methods: {
+    openLoadMarineOnStarship() {
+      this.marine = null
+      this.loadMarineOnStarshipDialog = true
+    },
+    openUnloadMarines() {
+      this.unloadMarinesDialog = true
+    },
     openNew() {
       this.starship = StarshipService.getDefaultStarship();
       // this.starships = StarshipService.getStarships();
@@ -144,6 +233,35 @@ export default {
     openGetStarshipById() {
       this.starship = null;
       this.getStarshipByIdDialog = true;
+    },
+    loadMarineOnStarshipEvent() {
+      StarshipService.loadMarineOnStarship(this.getStarshipId, this.getMarineId)
+          .then((resp) => {
+            this.marine = resp.data
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Starship',
+              detail: `Successfully load Marine ${this.getMarineId} on Starship ${this.getStarshipId}!`,
+              life: 3000
+            });
+
+          }, (err) => {
+            this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data.message, life: 3000});
+          })
+    },
+    unloadMarinesEvent() {
+      StarshipService.unloadMarinesFromStarship(this.getStarshipId)
+          .then((resp) => {
+            this.$toast.add({
+              severity: 'success',
+              summary: 'Starship',
+              detail: `Successfully unload Marine from Starship ${this.getStarshipId}!`,
+              life: 3000
+            });
+
+          }, (err) => {
+            this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data.message, life: 3000});
+          })
     },
     getStarshipById() {
       StarshipService.getStarshipById(this.getStarshipId)
@@ -157,7 +275,7 @@ export default {
             });
 
           }, (err) => {
-            this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data, life: 3000});
+            this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data.message, life: 3000});
           })
     },
     hideDialog() {
@@ -174,7 +292,7 @@ export default {
                 this.starships[this.findIndexById(this.starship.id)] = this.starship;
                 this.$toast.add({severity: 'success', summary: 'Starship', detail: "Starship Updated!", life: 3000});
               }, (err) => {
-                this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data, life: 3000});
+                this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data.message, life: 3000});
               })
         } else {
           // this.starships.push(this.starship);
@@ -185,7 +303,7 @@ export default {
                 this.$toast.add({severity: 'success', summary: 'Starship', detail: "Starship Created!", life: 3000});
               }, (err) => {
                 console.log(err)
-                this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data, life: 3000});
+                this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data.message, life: 3000});
               })
         }
 
@@ -212,7 +330,7 @@ export default {
                 this.$toast.add({severity: 'success', summary: 'Starship', detail: "Starship Deleted!", life: 3000});
               },
               (err) => {
-                this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data, life: 3000});
+                this.$toast.add({severity: 'error', summary: 'Starship', detail: err.response.data.message, life: 3000});
               })
       this.starship = {};
     },
@@ -230,38 +348,13 @@ export default {
     confirmDeleteSelected() {
       this.deleteStarshipsDialog = true;
     },
-  },
+  }
 }
 </script>
 
 <style scoped>
-
-video {
-  width: 50vw;
-  height: 50vh;
+.field > label {
+  font-weight: 800;
 }
 
-.image-viewer {
-  position: relative;
-  text-align: center;
-}
-
-.map-general {
-  display: contents;
-}
-
-img {
-  object-fit: contain;
-}
-
-.dot {
-  position: absolute;
-  border-radius: 50%;
-  background-color: #2e69ff; /* Change to your desired background color */
-  transition: all 0.3s ease;
-}
-
-.map {
-  width: 94%;
-}
 </style>

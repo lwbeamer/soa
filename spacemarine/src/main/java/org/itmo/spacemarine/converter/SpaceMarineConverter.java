@@ -6,6 +6,8 @@ import org.itmo.spacemarine.entity.SpaceMarine;
 import org.itmo.spacemarine.entity.Weapon;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class SpaceMarineConverter {
 
@@ -32,6 +34,7 @@ public class SpaceMarineConverter {
                 .health(spaceMarine.getHealth())
                 .name(spaceMarine.getName())
                 .weaponType(spaceMarine.getWeaponType())
+                .starshipId(Objects.nonNull(spaceMarine.getStarship())? spaceMarine.getStarship().getId() : null)
                 .build();
     }
 

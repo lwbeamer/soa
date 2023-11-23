@@ -7,7 +7,7 @@
     "serve-prod": "vue-cli-service serve --mode prod",
     "build-dev": "vue-cli-service build --mode dev",
     "build-prod": "vue-cli-service build --mode prod",
-    "deploy": "scp -r dist/* helios:/home/studs/s312200/public_html/soa-frontend"
+    "deploy": "deploy.sh"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.1",

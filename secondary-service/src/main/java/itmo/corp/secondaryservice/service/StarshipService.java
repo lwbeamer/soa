@@ -10,6 +10,7 @@ import itmo.corp.secondaryservice.exception.ClientException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.sql.SQLOutput;
 import java.time.Instant;
 
 @ApplicationScoped
@@ -19,7 +20,9 @@ public class StarshipService {
     private StarshipRestClient client;
 
     public SpaceMarineResponseDto loadToStarship(long starshipId, long spaceMarineId, String token) {
+        System.out.println(starshipId + " and spacemarineId" + spaceMarineId);
         SpaceMarineResponseDto spaceMarine = client.getSpaceMarineById(spaceMarineId, token);
+
         spaceMarine.setStarshipId(starshipId);
 
         SpaceMarineUpdateDto request = SpaceMarineUpdateDto.builder()

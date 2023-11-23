@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import itmo.corp.secondaryservice.config.AppConfig;
 import itmo.corp.secondaryservice.config.JacksonDeserializer;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.Filter;
@@ -22,16 +23,20 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
-@WebFilter(urlPatterns = "/api/starships/*")
+@WebFilter(urlPatterns = "/api/v1/starships/*")
 public class JwtTokenFilter implements Filter {
 
-    private final String publicKeyString = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3SjfZDG9O2Wa7UwVrG2lFHFPr2PVAby50NhCmfstFvR8+MgimBSndRMr7eEYjkbRbT7fLVqJxH3ORunfaMJUZYeAwjKDjDMaO8Ye1SA0LCOejK0PJaHOtG7vlwv9vN1TPnEhiWZulrcfnPRI5eshf25ZEfTNUvwdlqAJ3LrKjnl66OsiZqkcujKkp+VSRO/TbEigOG/z6R+CcXr5ue0FUbawyrTy5NcYzxtKTOEpF6/572EXRbAOkOUKiJFJtmaBB4kiuw6Z2U5Cw9Ii+ntdhW45SPrBK+Eg78ag9YI+fRhJDgJnx2YyVbOSw5SXQj81uNGW5Sc0tV/+DDMbMh5T7wIDAQAB";
+    private final String publicKeyString = AppConfig.getProperty("jwt.public-key");
 
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
+        httpResponse.setHeader("Access-Control-Allow-Origin", "*");
+        httpResponse.setHeader("Access-Control-Allow-Headers", "*");
+        httpResponse.setHeader("Access-Control-Allow-Methods", "*");
+        if (httpRequest.getMethod().equals("OPTIONS")) return;
 
         String token = httpRequest.getHeader("Authorization");
 
