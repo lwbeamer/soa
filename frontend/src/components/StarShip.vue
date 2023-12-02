@@ -19,7 +19,23 @@
           </template>
           <template #empty> No customers found.</template>
           <Column field="id" header="ID" class="w-3"/>
-          <Column field="name" header="Name" class="w-3"/>
+          <Column field="name" header="Name" class="w-3">
+            <template #body=" slotProps">
+              <div class="tooltip" v-tooltip.top="{
+                value: slotProps.data.name,
+                pt: {
+                    arrow: {
+                        style: {
+                            borderBottomColor: 'var(--primary-color)'
+                        }
+                    },
+                    text: 'bg-primary font-medium'
+                }
+            }">
+                {{ slotProps.data.name.length >= 10 ? slotProps.data.name.substring(0, 10).concat('...') : slotProps.data.name.toString() }}
+              </div>
+            </template>
+          </Column>
           <Column field="width" header="Width" class="w-2"/>
           <Column field="height" header="Height" class="w-2"/>
           <Column :exportable="false" class="w-2">

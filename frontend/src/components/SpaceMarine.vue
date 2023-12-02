@@ -40,6 +40,21 @@
           </Column>
           <Column field="name" header="Name" filterField="name" sortable style="min-width:16rem"
                   :showFilterMatchModes="false" :show-filter-operator="false">
+            <template #body=" slotProps">
+              <div class="tooltip" v-tooltip.top="{
+                value: slotProps.data.name,
+                pt: {
+                    arrow: {
+                        style: {
+                            borderBottomColor: 'var(--primary-color)'
+                        }
+                    },
+                    text: 'bg-primary font-medium'
+                }
+            }">
+                {{ slotProps.data.name.length >= 10 ? slotProps.data.name.substring(0, 10).concat('...') : slotProps.data.name.toString() }}
+              </div>
+            </template>
             <template #filter="{ filterModel }">
               <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by name"/>
             </template>
@@ -53,6 +68,21 @@
           </Column>
           <Column field="achievements" header="Achievements" sortable style="min-width:12rem"
                   :showFilterMatchModes="false" :show-filter-operator="false">
+            <template #body=" slotProps">
+              <div class="tooltip" v-tooltip.top="{
+                value: slotProps.data.achievements,
+                pt: {
+                    arrow: {
+                        style: {
+                            borderBottomColor: 'var(--primary-color)'
+                        }
+                    },
+                    text: 'bg-primary font-medium'
+                }
+            }">
+                {{ slotProps.data.achievements.length >= 10 ? slotProps.data.achievements.substring(0, 10).concat('...') : slotProps.data.achievements.toString() }}
+              </div>
+            </template>
             <template #filter="{ filterModel }">
               <InputText v-model="filterModel.value" type="text" class="p-column-filter"
                          placeholder="Search by achievements"/>
@@ -79,6 +109,21 @@
           </Column>
           <Column field="health" header="Health" sortable style="min-width:16rem" :showFilterMatchModes="false"
                   :show-filter-operator="false">
+            <!--            <template #body=" slotProps">-->
+            <!--              <div class="tooltip"  v-tooltip.top="{-->
+            <!--                value: slotProps.data.health,-->
+            <!--                pt: {-->
+            <!--                    arrow: {-->
+            <!--                        style: {-->
+            <!--                            borderBottomColor: 'var(&#45;&#45;primary-color)'-->
+            <!--                        }-->
+            <!--                    },-->
+            <!--                    text: 'bg-primary font-medium'-->
+            <!--                }-->
+            <!--            }">-->
+            <!--                {{slotProps.data.health.toString().length >= 10 ? slotProps.data.health.toString().substring(0,10).concat('...') : slotProps.data.health.toString()}}-->
+            <!--              </div>-->
+            <!--            </template>-->
             <template #filter="{ filterModel }">
               <InputNumber v-model="filterModel.value" placeholder="Search by health" integeronly/>
             </template>
@@ -99,6 +144,21 @@
           </Column>
           <Column field="chapter.name" header="Chapter Name" sortable style="min-width:16rem"
                   :showFilterMatchModes="false" :show-filter-operator="false">
+            <template #body=" slotProps">
+              <div class="tooltip" v-tooltip.top="{
+                value: slotProps.data.chapter.name,
+                pt: {
+                    arrow: {
+                        style: {
+                            borderBottomColor: 'var(--primary-color)'
+                        }
+                    },
+                    text: 'bg-primary font-medium'
+                }
+            }">
+                {{ slotProps.data.chapter.name.length >= 10 ? slotProps.data.chapter.name.substring(0, 10).concat('...') : slotProps.data.chapter.name }}
+              </div>
+            </template>
             <template #filter="{ filterModel }">
               <InputText v-model="filterModel.value" type="text" class="p-column-filter"
                          placeholder="Search by chapter name"/>
@@ -106,6 +166,21 @@
           </Column>
           <Column field="chapter.world" header="Chapter World" sortable style="min-width:16rem"
                   :showFilterMatchModes="false" :show-filter-operator="false">
+            <template #body=" slotProps">
+              <div class="tooltip" v-tooltip.top="{
+                value: slotProps.data.chapter.world,
+                pt: {
+                    arrow: {
+                        style: {
+                            borderBottomColor: 'var(--primary-color)'
+                        }
+                    },
+                    text: 'bg-primary font-medium'
+                }
+            }">
+                {{ slotProps.data.chapter.world.length >= 10 ? slotProps.data.chapter.world.substring(0, 10).concat('...') : slotProps.data.chapter.world }}
+              </div>
+            </template>
             <template #filter="{ filterModel }">
               <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by world"/>
             </template>
@@ -626,7 +701,12 @@ export default {
                     this.$toast.add({severity: 'success', summary: 'SpaceMarine', detail: "Marine Updated!", life: 3000});
                   },
                   (err) => {
-                    this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data.message, life: 3000});
+                    this.$toast.add({
+                      severity: 'error',
+                      summary: 'SpaceMarine',
+                      detail: err.response.data.message,
+                      life: 3000
+                    });
                   })
         } else {
           // this.marines.push(this.marine);
@@ -637,7 +717,12 @@ export default {
                     this.$toast.add({severity: 'success', summary: 'SpaceMarine', detail: "Marine Created!", life: 3000});
                   },
                   (err) => {
-                    this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data.message, life: 3000});
+                    this.$toast.add({
+                      severity: 'error',
+                      summary: 'SpaceMarine',
+                      detail: err.response.data.message,
+                      life: 3000
+                    });
                   })
         }
 

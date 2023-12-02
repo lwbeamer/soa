@@ -10,7 +10,7 @@
 	</parent>
 	<packaging>war</packaging>
 	<groupId>org.itmo</groupId>
-	<artifactId>spacemarine</artifactId>
+	<artifactId>first-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>spacemarine</name>
 	<description>Space Marine Service</description>

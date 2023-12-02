@@ -20,13 +20,29 @@ public class FieldsValidator {
     @Value("${space-marine.constraints.y-max-value:110}")
     private Integer yMaxValue;
 
+    public void checkLength(String... args) {
+        for (String arg : args) {
+            if (arg.length() >= 255) {
+                throw new BusinessException(ExceptionCode.RequestValidationFailed, "Максимальная длина полей = 255!");
+            }
+        }
+    }
+
     public void validateCreateRequest(SpaceMarineCreateRequestDto requestDto) {
+        checkLength(requestDto.getName(),
+                requestDto.getChapter().getName(),
+                requestDto.getChapter().getWorld(),
+                requestDto.getAchievements());
         checkHealth(requestDto.getHealth());
         checkCoordinateX(requestDto.getCoordinates().getX());
         checkCoordinateY(requestDto.getCoordinates().getY());
     }
 
     public void validateUpdateRequest(SpaceMarineUpdateDto requestDto) {
+        checkLength(requestDto.getName(),
+                requestDto.getChapter().getName(),
+                requestDto.getChapter().getWorld(),
+                requestDto.getAchievements());
         checkHealth(requestDto.getHealth());
         checkCoordinateX(requestDto.getCoordinates().getX());
         checkCoordinateY(requestDto.getCoordinates().getY());
