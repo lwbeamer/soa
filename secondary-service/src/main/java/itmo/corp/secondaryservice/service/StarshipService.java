@@ -1,26 +1,27 @@
 package itmo.corp.secondaryservice.service;
 
-import itmo.corp.secondaryservice.client.StarshipRestClient;
+import itmo.corp.secondaryservice.client.SpacemarineClient;
 import itmo.corp.secondaryservice.dto.Error;
 import itmo.corp.secondaryservice.dto.Page;
 import itmo.corp.secondaryservice.dto.SpaceMarine;
 import itmo.corp.secondaryservice.dto.SpaceMarineResponseDto;
 import itmo.corp.secondaryservice.dto.SpaceMarineUpdateDto;
 import itmo.corp.secondaryservice.exception.ClientException;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+import org.springframework.stereotype.Service;
 
-import java.sql.SQLOutput;
 import java.time.Instant;
 
-@ApplicationScoped
+@Service
 public class StarshipService {
 
-    @Inject
-    private StarshipRestClient client;
+    private final SpacemarineClient client;
+
+    public StarshipService(SpacemarineClient spacemarineClient) {
+        this.client = spacemarineClient;
+    }
+
 
     public SpaceMarineResponseDto loadToStarship(long starshipId, long spaceMarineId, String token) {
-        System.out.println(starshipId + " and spacemarineId" + spaceMarineId);
         SpaceMarineResponseDto spaceMarine = client.getSpaceMarineById(spaceMarineId, token);
 
         spaceMarine.setStarshipId(starshipId);
@@ -80,5 +81,4 @@ public class StarshipService {
         }
 
     }
-
 }

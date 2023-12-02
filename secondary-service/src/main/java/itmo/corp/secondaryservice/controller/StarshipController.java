@@ -4,30 +4,30 @@ import itmo.corp.secondaryservice.dto.Error;
 import itmo.corp.secondaryservice.dto.SpaceMarineResponseDto;
 import itmo.corp.secondaryservice.exception.ClientException;
 import itmo.corp.secondaryservice.service.StarshipService;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 
-@Path("/starships")
+@RestController
+@RequestMapping("/starships")
 public class StarshipController {
 
-    @Inject
-    private StarshipService starshipService;
+    private final StarshipService starshipService;
 
-    @PUT
-    @Path("/{starship_id}/load/{space-marine_id}")
+    public StarshipController(StarshipService starshipService) {
+        this.starshipService = starshipService;
+    }
+
+    @PutMapping("/{starship_id}/load/{space-marine_id}")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response loadSpaceMarine(
-            @HeaderParam("Authorization") String token,
-            @PathParam("starship_id") String starshipId,
-            @PathParam("space-marine_id") String spaceMarineId
+    public ResponseEntity<Object> loadSpaceMarine(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("starship_id") String starshipId,
+            @PathVariable("space-marine_id") String spaceMarineId
     ) {
         long starshipIdLong;
         long spaceMarineIdLong;
@@ -35,56 +35,49 @@ public class StarshipController {
             starshipIdLong = Long.parseLong(starshipId);
             spaceMarineIdLong = Long.parseLong(spaceMarineId);
         } catch (NumberFormatException ex) {
-            return Response
-                    .status(400).entity(Error.builder()
+            return ResponseEntity
+                    .status(400)
+                    .body(Error.builder()
                             .code(400)
                             .message("Некорректные параметры запроса")
-                            .timestamp(Instant.now()).build())
-                    .type(MediaType.APPLICATION_JSON_TYPE)
-                    .build();
+                            .timestamp(Instant.now()).build());
         }
 
         try {
             SpaceMarineResponseDto responseDto = starshipService.loadToStarship(starshipIdLong, spaceMarineIdLong, token);
-            return Response.status(200).entity(responseDto).type(MediaType.APPLICATION_JSON_TYPE).build();
+            return ResponseEntity.ok(responseDto);
         } catch (ClientException e) {
-            return Response
+            return ResponseEntity
                     .status(e.getError().getCode())
-                    .entity(e.getError())
-                    .type(MediaType.APPLICATION_JSON_TYPE)
-                    .build();
+                    .body(e.getError());
         }
     }
 
-    @PUT
-    @Path("/{starship_id}/unload-all")
+    @PutMapping("/{starship_id}/unload-all")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response unloadAllSpaceMarines(
-            @HeaderParam("Authorization") String token,
-            @PathParam("starship_id") String starshipId
+    public ResponseEntity<Object> unloadAllSpaceMarines(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("starship_id") String starshipId
     ) {
         long starshipIdLong;
         try {
             starshipIdLong = Long.parseLong(starshipId);
         } catch (NumberFormatException ex) {
-            return Response
-                    .status(400).entity(Error.builder()
+            return ResponseEntity
+                    .status(400)
+                    .body(Error.builder()
                             .code(400)
                             .message("Некорректные параметры запроса")
-                            .timestamp(Instant.now()).build())
-                    .type(MediaType.APPLICATION_JSON_TYPE)
-                    .build();
+                            .timestamp(Instant.now()).build());
         }
 
         try {
             starshipService.unloadAllFromStarship(starshipIdLong, token);
-            return Response.status(204).build();
+            return ResponseEntity.noContent().build();
         } catch (ClientException e) {
-            return Response
+            return ResponseEntity
                     .status(e.getError().getCode())
-                    .entity(e.getError())
-                    .type(MediaType.APPLICATION_JSON_TYPE)
-                    .build();
+                    .body(e.getError());
         }
     }
 }
