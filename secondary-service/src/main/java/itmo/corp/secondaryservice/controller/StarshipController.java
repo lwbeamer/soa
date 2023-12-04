@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
 
 @RestController
-@RequestMapping("/starships")
+@RequestMapping("/starship")
 public class StarshipController {
 
     private final StarshipService starshipService;

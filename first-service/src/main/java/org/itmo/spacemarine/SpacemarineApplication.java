@@ -6,12 +6,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class SpacemarineApplication extends SpringBootServletInitializer {
-
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(SpacemarineApplication.class);
-	}
+public class SpacemarineApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpacemarineApplication.class, args);
