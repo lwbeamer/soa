@@ -1,5 +1,6 @@
 package itmo.corp.secondaryservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class Coordinates implements Serializable {
 
+
+    @JsonIgnore
     private Long id;
 
     private Long x;

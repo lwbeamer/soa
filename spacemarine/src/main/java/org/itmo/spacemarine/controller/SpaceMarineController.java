@@ -10,6 +10,8 @@ import org.itmo.spacemarine.exception.ExceptionCode;
 import org.itmo.spacemarine.service.SpaceMarineService;
 import org.itmo.spacemarine.util.FieldsValidator;
 import org.itmo.spacemarine.util.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +43,7 @@ public class SpaceMarineController {
 
 
     @PutMapping("/{id}")
-    public void updateSpaceMarine(@PathVariable String id, @RequestBody SpaceMarineUpdateDto requestDto){
+    public ResponseEntity<?> updateSpaceMarine(@PathVariable String id, @RequestBody SpaceMarineUpdateDto requestDto){
         long longId;
         try{
             longId = Long.parseLong(id);
@@ -51,6 +53,7 @@ public class SpaceMarineController {
 
         fieldsValidator.validateUpdateRequest(requestDto);
         spaceMarineService.updateSpaceMarine(longId, requestDto);
+        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{id}")

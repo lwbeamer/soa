@@ -7,19 +7,36 @@ import org.itmo.spacemarine.exception.AccessForbiddenException;
 import org.itmo.spacemarine.exception.BusinessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 
 @Slf4j
 @ControllerAdvice
-public class GlobalHttpExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalHttpExceptionHandler {
+
+
+
+    @ExceptionHandler({NoHandlerFoundException.class})
+    public ResponseEntity<Error> handleNoHandlerFoundException(
+            NoHandlerFoundException ex, HttpServletRequest httpServletRequest) {
+        Error apiErrorResponse = Error.builder()
+                .code(HttpStatus.UNAUTHORIZED.value())
+                .message("Неверный uri")
+                .timestamp(Instant.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(apiErrorResponse);
+    }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Error> handleBusinessException(BusinessException ex) {
@@ -59,32 +76,4 @@ public class GlobalHttpExceptionHandler extends ResponseEntityExceptionHandler {
                         .timestamp(Instant.now())
                         .build());
     }
-
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String message = ex.getMessage();
-        log.info(message, ex);
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Error.builder()
-                        .code(HttpStatus.BAD_REQUEST.value())
-                        .message("Неверное тело запроса! Подробнее: " + message)
-                        .timestamp(Instant.now())
-                        .build());
-    }
-
-    @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String message = ex.getMessage();
-        log.info(message, ex);
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Error.builder()
-                        .code(HttpStatus.BAD_REQUEST.value())
-                        .message("Неверное тело запроса! Подробнее: " + message)
-                        .timestamp(Instant.now())
-                        .build());
-    }
-
-
 }
