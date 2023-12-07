@@ -26,7 +26,7 @@ public class SpaceMarineConverter {
     public SpaceMarineResponseDto convertFromSpaceMarineToResponse(SpaceMarine spaceMarine) {
         return SpaceMarineResponseDto.builder()
                 .achievements(spaceMarine.getAchievements())
-                .creationDate(spaceMarine.getCreationDate())
+                .creationDate(spaceMarine.getCreationDate().atStartOfDay())
                 .id(spaceMarine.getId())
                 .category(spaceMarine.getCategory())
                 .chapter(spaceMarine.getChapter())

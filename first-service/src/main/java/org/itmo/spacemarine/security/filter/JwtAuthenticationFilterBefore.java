@@ -43,11 +43,13 @@ public class JwtAuthenticationFilterBefore extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            response.addHeader("Access-Control-Allow-Origin", "*");
-            response.addHeader("Access-Control-Allow-Headers", "*");
-            response.addHeader("Access-Control-Allow-Methods", "*");
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Allow-Headers", "*");
+            response.setHeader("Access-Control-Allow-Methods", "*");
             log.info("ПРИШЕЛ ЗАПРОС С МЕТОДОМ  " + request.getMethod());
             if (request.getMethod().equals("OPTIONS")) return;
+            if ("/my-health-check".equals(request.getRequestURI()) ||
+            "itmo/api/my-health-check".equals(request.getRequestURI())) return;
             Optional<String> optionalToken = extractAccessToken(request);
             if (optionalToken.isPresent() && StringUtils.hasLength(optionalToken.get())) {
                 try {
