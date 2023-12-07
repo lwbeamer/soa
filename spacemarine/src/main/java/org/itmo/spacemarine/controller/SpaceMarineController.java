@@ -10,6 +10,7 @@ import org.itmo.spacemarine.exception.ExceptionCode;
 import org.itmo.spacemarine.service.SpaceMarineService;
 import org.itmo.spacemarine.util.FieldsValidator;
 import org.itmo.spacemarine.util.Page;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +26,19 @@ public class SpaceMarineController {
 
     private final FieldsValidator fieldsValidator;
 
+    @Value("${server.port}")
+    private String serverPort;
+
     @GetMapping
     public Page<SpaceMarine> getAll(HttpServletRequest request) {
+        System.out.println("I amd running on port " + serverPort);
         return spaceMarineService.getAll(request);
     }
 
     @GetMapping("/{id}")
     public SpaceMarineResponseDto getById(@PathVariable String id) {
+        System.out.println("I amd running on port " + serverPort);
+
         long longId;
         try{
             longId = Long.parseLong(id);
@@ -44,6 +51,8 @@ public class SpaceMarineController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateSpaceMarine(@PathVariable String id, @RequestBody SpaceMarineUpdateDto requestDto){
+        System.out.println("I amd running on port " + serverPort);
+
         long longId;
         try{
             longId = Long.parseLong(id);
@@ -58,6 +67,8 @@ public class SpaceMarineController {
 
     @DeleteMapping("/{id}")
     public void deleteSpaceMarine(@PathVariable String id) {
+        System.out.println("I amd running on port " + serverPort);
+
         long longId;
         try{
             longId = Long.parseLong(id);
@@ -69,6 +80,8 @@ public class SpaceMarineController {
 
     @PostMapping
     public void addSpaceMarine(@RequestBody SpaceMarineCreateRequestDto requestDto) {
+        System.out.println("I amd running on port " + serverPort);
+
         fieldsValidator.validateCreateRequest(requestDto);
         spaceMarineService.addNewMarine(requestDto);
     }

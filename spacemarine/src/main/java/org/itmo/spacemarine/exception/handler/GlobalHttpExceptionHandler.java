@@ -31,7 +31,7 @@ public class GlobalHttpExceptionHandler {
     public ResponseEntity<Error> handleNoHandlerFoundException(
             NoHandlerFoundException ex, HttpServletRequest httpServletRequest) {
         Error apiErrorResponse = Error.builder()
-                .code(HttpStatus.UNAUTHORIZED.value())
+                .code(HttpStatus.NOT_FOUND.value())
                 .message("Неверный uri")
                 .timestamp(Instant.now())
                 .build();

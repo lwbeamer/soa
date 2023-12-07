@@ -10,7 +10,6 @@ import javax.sql.DataSource;
 
 
 @Configuration
-@EnableWebMvc
 public class GeneralConfiguration {
 //    private static final String JNDI = "jdbc/soa";
 //
