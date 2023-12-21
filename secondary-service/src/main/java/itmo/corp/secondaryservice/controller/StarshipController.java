@@ -59,6 +59,7 @@ public class StarshipController {
             @RequestHeader("Authorization") String token,
             @PathVariable("starship_id") String starshipId
     ) {
+        System.out.println("UNLOAD ALL INVOATION!");
         long starshipIdLong;
         try {
             starshipIdLong = Long.parseLong(starshipId);
@@ -75,6 +76,8 @@ public class StarshipController {
             starshipService.unloadAllFromStarship(starshipIdLong, token);
             return ResponseEntity.noContent().build();
         } catch (ClientException e) {
+            System.out.println(e.getError());
+            System.out.println(e.getError().getMessage());
             return ResponseEntity
                     .status(e.getError().getCode())
                     .body(e.getError());

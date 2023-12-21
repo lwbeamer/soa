@@ -6,7 +6,7 @@
     "serve-dev": "vue-cli-service serve --mode dev",
     "serve-prod": "vue-cli-service serve --mode prod",
     "build-dev": "vue-cli-service build --mode dev",
-    "build-prod": "vue-cli-service build --mode prod",
+    "build-prod": "vue-cli-service build --mode prod && scp -r dist/* helios:/home/studs/s312200/public_html/soa-frontend",
     "deploy": "deploy.sh"
   },
   "dependencies": {

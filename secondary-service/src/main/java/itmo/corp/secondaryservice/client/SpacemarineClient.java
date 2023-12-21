@@ -69,7 +69,7 @@ public class SpacemarineClient {
         } catch (Exception e) {
             error = Error.builder()
                     .code(418)
-                    .message("Ошибка отправки запроса на главный сервис!")
+                    .message("Ошибка отправки запроса на главный сервис!" + e.getMessage())
                     .timestamp(Instant.now())
                     .build();
         }
@@ -108,7 +108,7 @@ public class SpacemarineClient {
         } catch (Exception e) {
             throw new ClientException(Error.builder()
                     .code(418)
-                    .message("Ошибка отправки запроса на главный сервис!")
+                    .message("Ошибка отправки запроса на главный сервис!" + e.getMessage())
                     .timestamp(Instant.now())
                     .build());
         }

@@ -73,10 +73,12 @@ public class StarshipService {
         } catch (ClientException e) {
             throw e;
         } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println(e.getCause());
             throw new ClientException(Error.builder()
                     .code(418)
                     .timestamp(Instant.now())
-                    .message("Ошибка при запросе на главный сервис!")
+                    .message("Ошибка при запросе на главный сервис!" + e.getMessage() + "\n" + e.getCause())
                     .build());
         }
 

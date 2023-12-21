@@ -7,3 +7,13 @@ keytool -import -alias soa -file soa.crt -keystore $JAVA_HOME/lib/security/cacer
 > Также обеспечьте все используемые jdk данным сертификатом 
 
 Также в config сервисе установите необходимые переменные окружения в файле `application.yml`
+
+## Запуск haproxy
+```shell
+haproxy -f haproxy.cfg
+```
+## Запуск consul
+```shell
+consul agent -dev -config-dir=config.json
+```
+

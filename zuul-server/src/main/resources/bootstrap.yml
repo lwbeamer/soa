@@ -6,3 +6,5 @@ spring:
   cloud:
     config:
       uri: https://localhost:8788
+#  mvc:
+#    dispatch-options-request: true

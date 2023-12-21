@@ -1,7 +1,7 @@
 package org.itmo.spacemarine.config;
 
 import lombok.AllArgsConstructor;
-import org.itmo.spacemarine.security.filter.JwtAuthenticationFilterBefore;
+//import org.itmo.spacemarine.security.filter.JwtAuthenticationFilterBefore;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 @AllArgsConstructor
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final JwtAuthenticationFilterBefore jwtAuthenticationFilterBefore;
+//    private final JwtAuthenticationFilterBefore jwtAuthenticationFilterBefore;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -48,10 +48,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // Our private endpoints
 
         // Add JWT token filter
-        http.addFilterBefore(
-                jwtAuthenticationFilterBefore,
-                UsernamePasswordAuthenticationFilter.class
-        );
+//        http.addFilterBefore(
+//                jwtAuthenticationFilterBefore,
+//                UsernamePasswordAuthenticationFilter.class
+//        );
     }
 }
 
