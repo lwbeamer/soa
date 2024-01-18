@@ -1,10 +1,12 @@
 package itmo.corp.secondaryservice;
 
-import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.core.Application;
 
-@ApplicationPath("/api/v1")
-public class HelloApplication extends Application {
+public class HelloApplication  {
 
+
+//    public static void main(String[] args) {
+//        Endpoint.publish("http://localhost:8080/starship",
+//                         new StarshipWebService());
+//    }
 
 }

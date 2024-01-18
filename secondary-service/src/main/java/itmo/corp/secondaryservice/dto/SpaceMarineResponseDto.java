@@ -28,9 +28,6 @@ public class SpaceMarineResponseDto {
 
     private Long health;
 
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonIgnore
     private LocalDate creationDate;
 
     private String achievements;
