@@ -28,7 +28,10 @@ public class SpaceMarineResponseDto {
 
     private Long health;
 
-    private LocalDate creationDate;
+//    @JsonDeserialize(using = LocalDateDeserializer.class)
+//    @JsonSerialize(using = LocalDateSerializer.class)
+//    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss[.SSS][.SS][.S]")
+//    private LocalDate creationDate;
 
     private String achievements;
 

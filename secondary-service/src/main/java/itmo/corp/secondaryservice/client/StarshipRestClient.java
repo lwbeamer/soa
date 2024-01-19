@@ -55,7 +55,8 @@ public class StarshipRestClient {
 
     @SneakyThrows
     public SpaceMarineResponseDto getSpaceMarineById(long id, String token) {
-        Client client = createSSLClient();
+//        Client client = createSSLClient();
+        Client client = ClientBuilder.newClient();
 
         Response response = null;
         SpaceMarineResponseDto responseData = null;
@@ -66,6 +67,7 @@ public class StarshipRestClient {
                     .header("Authorization", token)
                     .get();
 
+            System.out.println("Response code getSpaceMarineById = " + response.getStatus());
             if (response.getStatus() == 200) {
                 responseData = response.readEntity(SpaceMarineResponseDto.class);
                 System.out.println(responseData);
@@ -74,6 +76,7 @@ public class StarshipRestClient {
             response.close();
             client.close();
         } catch (Exception e) {
+            System.out.println("Error! " + e.getMessage());
             if (response != null) response.close();
             client.close();
             throw new ClientException(Error.builder()
@@ -87,7 +90,8 @@ public class StarshipRestClient {
 
     @SneakyThrows
     public Error updateSpaceMarineRequest(long id, SpaceMarineUpdateDto requestData, String token) {
-        Client client = createSSLClient();
+//        Client client = createSSLClient();
+        Client client = ClientBuilder.newClient();
         Error error = null;
 
         Response response = null;
@@ -98,6 +102,8 @@ public class StarshipRestClient {
                     .header("Authorization", token)
                     .put(Entity.entity(requestData, MediaType.APPLICATION_JSON));
 
+
+            System.out.println("Response code updateSpaceMarine = " + response.getStatus());
             if (response.getStatus() == 200) {
                 System.out.println("PUT request was successful");
             } else {
@@ -107,6 +113,7 @@ public class StarshipRestClient {
             response.close();
             client.close();
         } catch (Exception e) {
+            System.out.println("Error! " + e.getMessage());
             error = Error.builder()
                     .code(418)
                     .message("Ошибка отправки запроса на главный сервис!")
@@ -119,7 +126,8 @@ public class StarshipRestClient {
 
     @SneakyThrows
     public Page<SpaceMarine> getAllSpaceMarinesInStarship(long starshipId, String token) {
-        Client client = createSSLClient();
+//        Client client = createSSLClient();
+        Client client = ClientBuilder.newClient();
 
         Response response = null;
         Page<SpaceMarine> responseData = null;
