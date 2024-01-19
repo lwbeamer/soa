@@ -23,4 +23,9 @@ public interface StarshipWebService {
             @WebParam(name = "starshipId") String starshipId,
             @WebParam(name = "spaceMarineId") String spaceMarineId
     );
+
+    @WebMethod
+    void unloadAllFromStarship(
+            @WebParam(name = "starshipId") String starshipId
+    );
 }

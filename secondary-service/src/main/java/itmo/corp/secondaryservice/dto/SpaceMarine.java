@@ -22,8 +22,8 @@ public class SpaceMarine implements Serializable {
 
     private Coordinates coordinates;
 
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    private LocalDate creationDate;
+//    @JsonDeserialize(using = LocalDateDeserializer.class)
+//    private LocalDate creationDate;
 
     private Long health;
 

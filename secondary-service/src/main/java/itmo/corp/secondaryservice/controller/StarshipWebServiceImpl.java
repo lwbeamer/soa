@@ -40,9 +40,28 @@ public class StarshipWebServiceImpl implements StarshipWebService{
     }
 
     @Override
+    public void unloadAllFromStarship(String starshipId) {
+        String token = "Bearer eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJsd2JlYW1lciIsImlhdCI6MTY5ODA5Mzk5M30.0-GdiYjVCjnS4bMQL0nGWPmiG4QarpG-4MpfjFBxURdT9j9r2mAYXhLDcoE1RAhNTuvqHVhVdIy0BHJoeCWCo4w4TRJ6Wj4M7p-gLgTeZ9chS13_aa76ft3IyxWuoyoeqjBNuwUmBOfGqejW8xu87hSow50CJAbD2hCw34nEs2vTog2VTOPupd7ABjLksEX-_KwTFmJGvtUREYpRbUEdOE-gm-8AwIJ4LQyLi3dCE9RNuKgABdtJpjNCD0MDwZjRcLTm91WG2QNApJRA6MqxwZUjBWLbmhxbBHmvkD5SuD6Gyer-4ftuSWXeF01VHFfxJes4wm8E4dBZFif1RLufTA";
+        long starshipIdLong;
+        try {
+            starshipIdLong = Long.parseLong(starshipId);
+        } catch (NumberFormatException ex) {
+            throw new WebServiceException("Incorrect request!");
+        }
+        try {
+            starshipService.unloadAllFromStarship(starshipIdLong, token);
+        } catch (ClientException e) {
+            throw new WebServiceException("Failed to send request to other service!");
+        }
+    }
+
+
+    @Override
     public String processStrings(String param1, String param2) {
         return "Processed: " + param1 + ", " + param2;
     }
+
+
 
 //    @PUT
 //    @Path("/{starship_id}/unload-all")

@@ -141,6 +141,7 @@ public class StarshipRestClient {
                     .header("Authorization", token)
                     .get();
 
+            System.out.println("Response code getAllSpaceMarinesInStarship = " + response.getStatus());
 
             if (response.getStatus() == 200) {
                 responseData = response.readEntity(new GenericType<>() {
@@ -151,6 +152,8 @@ public class StarshipRestClient {
             client.close();
 
         } catch (Exception e) {
+            System.out.println("Error! " + e.getMessage());
+
             if (response != null) response.close();
             client.close();
             throw new ClientException(Error.builder()
