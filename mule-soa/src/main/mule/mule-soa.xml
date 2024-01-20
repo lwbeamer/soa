@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+	<wsc:config name="Web_Service_Consumer_Config2" doc:name="Web Service Consumer Config" doc:id="f6623a16-d4f9-4ad0-be2e-57ee3e248823" >
+		<wsc:connection wsdlLocation="http://b2b-int.n3health.ru/emk/PixService.svc" service="PixService" port="BasicHttpBinding_IPixService" address="http://b2b-int.n3health.ru/emk/PixService.svc" >
+			<wsc:web-service-security actor="http://schemas.xmlsoap.org/soap/actor/next" />
+		</wsc:connection>
+	</wsc:config>
+	<tls:context name="keystore" doc:name="TLS Context" doc:id="50843961-1a5f-48a2-8929-da557d80d4f1" >
+		<tls:trust-store path="keystore.jks" password="password" type="pkcs12" insecure="true" />
+		<tls:key-store type="pkcs12" path="keystore.jks" alias="soa" keyPassword="password" password="password" />
+	</tls:context>
+	<http:listener-config name="first-service-proxy" doc:name="HTTP Listener config" doc:id="b21c4fc7-9db5-4114-a03f-c4f951cc5eae" basePath="/api/v1/spacemarines" >
+		<http:listener-connection host="0.0.0.0" port="8100" tlsContext="keystore" protocol="HTTPS"/>
+	</http:listener-config>
+	<http:request-config name="first-service-rest" doc:name="HTTP Request configuration" doc:id="ce7b1ca5-9b0a-4ede-9118-0ee4d8b7547c" basePath="/api/v1/spacemarines" >
+		<http:request-connection protocol="HTTPS" host="localhost" port="10124" tlsContext="keystore" />
+	</http:request-config>
+	<wsc:config name="Web_Service_Consumer_Config1" doc:name="Web Service Consumer Config" doc:id="8cba1a3f-118c-4f9c-ad64-6110c01842f7" >
+		<wsc:connection wsdlLocation="http://localhost:8080/StarshipWebServiceImpl?wsdl" service="StarshipWebServiceImplService" port="StarshipWebServiceImplPort" address="http://localhost:8080/StarshipWebServiceImpl" >
+			<wsc:web-service-security actor="http://schemas.xmlsoap.org/soap/actor/next" />
+		</wsc:connection>
+	</wsc:config>
+	<http:listener-config name="secondary-service-soap" doc:name="HTTP Listener config" doc:id="e117c24a-20df-4390-a13f-056c156d6b27" basePath="/api/v1/starships">
+		<http:listener-connection protocol="HTTPS" host="0.0.0.0" port="8101" tlsContext="keystore" />
+	</http:listener-config>
+	<flow name="updateSpaceMarine" doc:id="a0e9f3ce-fc9d-4072-afe8-77db794b339b" >
+		<http:listener doc:name="Listener" doc:id="8c295de1-45f5-486b-8db7-2271436fc0e4" config-ref="first-service-proxy" path="/space-marines/{id}" allowedMethods="PUT" >
+			<http:response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Access-Control-Allow-Origin" : "*",
+	"Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, HEAD, OPTIONS",
+	"Access-Control-Allow-Headers" : "*",
+	"Access-Control-Allow-Credentials" : "true"
+}]]]></http:headers>
+			</http:response>
+			<http:error-response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Access-Control-Allow-Origin" : "*",
+	"Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, HEAD, OPTIONS",
+	"Access-Control-Allow-Headers" : "*",
+	"Access-Control-Allow-Credentials" : "true"
+}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message" doc:id="e0c8f219-d8c8-4168-a1d2-c7065a45e74f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+fun parseCoordinates(coordinates) =
+  {
+	x: coordinates.x as Number,
+	y: coordinates.y as Number
+}
+---
+{
+	name: payload.SpaceMarineUpdateDto.name,
+	coordinates: parseCoordinates(payload.SpaceMarineUpdateDto.coordinates),
+	health: payload.SpaceMarineUpdateDto.health,
+	achievements: payload.SpaceMarineUpdateDto.achievements,
+	category: payload.SpaceMarineUpdateDto.category,
+	weaponType: payload.SpaceMarineUpdateDto.weaponType,
+	chapter: {
+		name: payload.SpaceMarineUpdateDto.chapter.name,
+		world: payload.SpaceMarineUpdateDto.chapter.world
+	},
+	starshipId: payload.SpaceMarineUpdateDto.starshipId
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="0fdb5282-d189-45f0-b691-08be1cb92433" message="#[attributes.rawRequestUri]" />
+		<logger level="INFO" doc:name="Logger1" doc:id="1202d4de-252c-4ffe-abe9-d52d22d02af3" message="#[attributes.uriParams.id]"/>
+		<http:request method="PUT" doc:name="Request" doc:id="1b7b22dc-e01d-43be-9290-fb90df26f18d" config-ref="first-service-rest" path="/space-marines/{id}" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{ 
+	Authorization: "Bearer abc"
+}]]]></http:headers>
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	id : attributes.uriParams.id
+}]]]></http:uri-params>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+//	starshipId: attributes.queryParams.starshipId,
+//	pageSize: 2147483647
+}]]]></http:query-params>
+		</http:request>
+	</flow>
+	<flow name="getAllSpaceMarinesInStarship" doc:id="0917764d-af3a-42e3-92a6-9e3398b0f80c" >
+		<http:listener doc:name="Listener" doc:id="5c27aa70-859a-4d95-9484-5250f3ea86a9" config-ref="first-service-proxy" path="/space-marines" allowedMethods="GET" >
+			<http:response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Access-Control-Allow-Origin" : "*",
+	"Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, HEAD, OPTIONS",
+	"Access-Control-Allow-Headers" : "*",
+	"Access-Control-Allow-Credentials" : "true"
+}]]]></http:headers>
+			</http:response>
+			<http:error-response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Access-Control-Allow-Origin" : "*",
+	"Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, HEAD, OPTIONS",
+	"Access-Control-Allow-Headers" : "*",
+	"Access-Control-Allow-Credentials" : "true"
+}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<http:request method="GET" doc:name="Request" doc:id="77e1d424-9930-4916-a21c-a030487b34c4" config-ref="first-service-rest" path="/space-marines" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{ 
+//	Authorization: "Bearer abc"
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	starshipId: attributes.queryParams.starshipId,
+	pageSize: 2147483647
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="5410f621-b4ab-40b4-8180-c9785ca1571d" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="7faf8087-a710-417d-a5d2-cd22d388c2ea" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+fun formatSpaceMarine(spaceMarine) =
+  {
+	objects: {
+		id: spaceMarine.id,
+		name: spaceMarine.name,
+		coordinates: {
+			x: spaceMarine.coordinates.x,
+			y: spaceMarine.coordinates.y
+		},
+		creationDate: spaceMarine.creationDate,
+		health: spaceMarine.health,
+		achievements: spaceMarine.achievements,
+		category: spaceMarine.category,
+		weaponType: spaceMarine.weaponType,
+		chapter: {
+			name: spaceMarine.chapter.name,
+			world: spaceMarine.chapter.world
+		},
+		starship: {
+			id: spaceMarine.starship.id,
+			name: spaceMarine.starship.name,
+			width: spaceMarine.starship.width,
+			height: spaceMarine.starship.height
+		}
+	}
+}
+---
+{
+	Page: {
+		objects: {
+			object: payload.objects map (data, idx) -> {
+				
+				id: data.id,
+				name: data.name,
+				coordinates: {
+					x: data.coordinates.x,
+					y: data.coordinates.y
+				},
+				creationDate: data.creationDate,
+				health: data.health,
+				achievements: data.achievements,
+				category: data.category,
+				weaponType: data.weaponType,
+				chapter: {
+					name: data.chapter.name,
+					world: data.chapter.world
+				},
+				starship: {
+					id: data.starship.id,
+					name: data.starship.name,
+					width: data.starship.width,
+					height: data.starship.height
+				}
+			}
+		},
+		page: payload.page,
+		pageSize: payload.pageSize,
+		totalPages: payload.totalPages
+	}
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="SOAP_loadSpacemarine" doc:id="719a62b9-1374-41f6-9451-fad053d1700e" >
+		<http:listener doc:name="Listener" doc:id="72afe358-dac0-43fb-ac04-457a446d79be" config-ref="secondary-service-soap" path="/starship/{starshipId}/load/{spacemarineId}" allowedMethods="PUT" >
+			<http:response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Access-Control-Allow-Origin" : "*",
+	"Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, HEAD, OPTIONS",
+	"Access-Control-Allow-Headers" : "*",
+	"Access-Control-Allow-Credentials" : "true"
+}]]]></http:headers>
+			</http:response>
+			<http:error-response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Access-Control-Allow-Origin" : "*",
+	"Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, HEAD, OPTIONS",
+	"Access-Control-Allow-Headers" : "*",
+	"Access-Control-Allow-Credentials" : "true"
+}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message1" doc:id="976cb871-954c-425f-8518-317b9b21a952">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+
+var starshipId = attributes.uriParams.starshipId
+var spacemarineId = attributes.uriParams.spacemarineId
+
+ns web http://api.controller.secondaryservice.corp.itmo/
+---
+{
+	web#loadSpaceMarine: {
+		starshipId: starshipId,
+		spaceMarineId: spacemarineId
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="f205b1ff-97b3-4b2d-9967-6d70dcc912d0" config-ref="Web_Service_Consumer_Config1" operation="loadSpaceMarine"/>
+		<logger level="INFO" doc:name="Logger2" doc:id="20c2b9c1-278b-4869-a767-7cb1fb822afb" message="#[payload]" />
+		<ee:transform doc:name="Transform Message" doc:id="6c58229a-714a-42ba-a566-7c427e00495c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+fun parseCoordinates(coordinates) =
+  {
+    x: coordinates.x,
+    y: coordinates.y
+  }
+
+fun parseChapter(chapter) =
+  {
+    name: chapter.name,
+    world: chapter.world
+  }
+
+fun parseSpaceMarine(response) =
+  {
+    achievements: response.return.achievements,
+    category: response.return.category,
+    chapter: parseChapter(response.return.chapter),
+    coordinates: parseCoordinates(response.return.coordinates),
+    health: response.return.health,
+    id: response.return.id,
+    name: response.return.name,
+    starshipId: response.return.starshipId,
+    weaponType: response.return.weaponType
+  }
+ns ns2 http://api.controller.secondaryservice.corp.itmo/
+
+---
+payload.body.ns2#loadSpaceMarineResponse.return]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="SOAP_unloadSpacemarine" doc:id="66adfbbf-5694-4551-a229-c5c3e6969afc" >
+		<http:listener doc:name="Listener" doc:id="d4dddc43-0c24-4d93-8be3-da9a1035a782" config-ref="secondary-service-soap" path="/starship/{starshipId}/unload-all" allowedMethods="PUT" >
+			<http:response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Access-Control-Allow-Origin" : "*",
+	"Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, HEAD, OPTIONS",
+	"Access-Control-Allow-Headers" : "*",
+	"Access-Control-Allow-Credentials" : "true"
+}]]]></http:headers>
+			</http:response>
+			<http:error-response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Access-Control-Allow-Origin" : "*",
+	"Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, HEAD, OPTIONS",
+	"Access-Control-Allow-Headers" : "*",
+	"Access-Control-Allow-Credentials" : "true"
+}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<ee:transform doc:name="Transform Message" doc:id="4e3bcd4f-002b-4119-9e79-cd027ecf5010" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+
+var starshipId = attributes.uriParams.starshipId
+var spacemarineId = attributes.uriParams.spacemarineId
+
+ns web http://api.controller.secondaryservice.corp.itmo/
+---
+{
+	web#unloadAllFromStarship: {
+		starshipId: starshipId,
+
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="22ecccb2-be55-451c-9c84-e622343921ab" config-ref="Web_Service_Consumer_Config1" operation="unloadAllFromStarship"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5fac414e-47ab-439b-88dc-34bf5dfbb513" message="#[payload]" />
+	</flow>
+	<flow name="loadSpacemarine_Options" doc:id="f4852fe3-71ef-4c0a-a7d6-c23b4cb50c72" >
+		<http:listener doc:name="Listener" doc:id="433323c8-e7c6-424f-bfaa-4df1e2dddfd7" config-ref="secondary-service-soap" path="/starship/{starshipId}/load/{spacemarineId}" allowedMethods="OPTIONS" >
+			<http:response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Access-Control-Allow-Origin" : "*",
+	"Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, HEAD, OPTIONS",
+	"Access-Control-Allow-Headers" : "*",
+	"Access-Control-Allow-Credentials" : "true"
+}]]]></http:headers>
+			</http:response>
+			<http:error-response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Access-Control-Allow-Origin" : "*",
+	"Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, HEAD, OPTIONS",
+	"Access-Control-Allow-Headers" : "*",
+	"Access-Control-Allow-Credentials" : "true"
+}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="e4211c39-96be-4e46-8b39-c5cbb1cde035" />
+	</flow>
+	<flow name="unloadAllSpaceMarine_Options" doc:id="1ac00b1b-6b45-4cbc-bfdd-1e554fa99b52" >
+		<http:listener doc:name="Listener" doc:id="c1f72116-ca24-4f18-a24c-a5647e9f0f1a" config-ref="secondary-service-soap" path="/starship/{starshipId}/unload-all" allowedMethods="OPTIONS" >
+			<http:response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Access-Control-Allow-Origin" : "*",
+	"Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, HEAD, OPTIONS",
+	"Access-Control-Allow-Headers" : "*",
+	"Access-Control-Allow-Credentials" : "true"
+}]]]></http:headers>
+			</http:response>
+			<http:error-response >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Access-Control-Allow-Origin" : "*",
+	"Access-Control-Allow-Methods" : "GET, PUT, POST, DELETE, HEAD, OPTIONS",
+	"Access-Control-Allow-Headers" : "*",
+	"Access-Control-Allow-Credentials" : "true"
+}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="bf92fce1-fe47-419d-b1ed-9618f007f10b" />
+	</flow>
+</mule>

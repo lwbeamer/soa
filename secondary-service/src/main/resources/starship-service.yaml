@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: Starship Service 
+  description: Starship Service for SOA 
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/api/v1/starships'
+paths:
+  /starship/{starship-id}/load/{space-marine-id}:
+    put:
+      summary: Load selected spacemarine into starship
+      description: Load selected spacemarine into starship
+      parameters:
+        - name: starship-id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+            exclusiveMinimum: true
+            example: 1
+        - name: space-marine-id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+            exclusiveMinimum: true
+            example: 1
+      tags:
+        - Starship
+      responses:
+        '200':
+          description: Returns spacemarine placed into starship
+          content:
+            application/json:
+              schema:
+                $ref: './space-marine.yml#/components/schemas/Starship'
+        default:
+          description: Возвращает тело для ошибки (код ошибки, время и сообщение)
+          content:
+            application/json:
+              schema:
+                $ref: './space-marine.yml#/components/schemas/Error'
+  /starship/{starship-id}/unload-all:
+    put:
+      summary: Unload all spacemarine placed onto starship
+      description: Unload all spacemarine placed onto starship (update spacemarine so that clean relation to starship)
+      parameters:
+        - name: starship-id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+            exclusiveMinimum: true
+            example: 1
+      tags:
+        - Starship
+      responses:
+        '204':
+          description: Retuns result that all space marines was successfully unloaded
+        default:
+          description: Возвращает тело для ошибки (код ошибки, время и сообщение)
+          content:
+            application/json:
+              schema:
+                $ref: './space-marine.yml#/components/schemas/Error'

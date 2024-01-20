@@ -10,7 +10,6 @@
     <modules>
         <module>spacemarine</module>
         <module>secondary-service</module>
-        <module>auth-service</module>
     </modules>
 
     <modelVersion>4.0.0</modelVersion>

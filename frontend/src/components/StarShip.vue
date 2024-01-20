@@ -2,16 +2,16 @@
   <Toast/>
   <div class="card bg-white border-primary-50 border-round-2xl h-auto w-12 ml-2 overflow-x-scroll">
     <div class="card w-12">
-      <Toolbar class="mb-4">
+      <Toolbar >
         <template #start>
-          <Button label="New" icon="pi pi-plus" severity="success" class="mr-2" @click="openNew"/>
-          <Button label="Get By ID" severity="danger" class="mr-2" @click="openGetStarshipById"/>
-          <Button label="Load Marine" severity="danger" class="mr-2" @click="openLoadMarineOnStarship"/>
-          <Button label="Unload Marines" severity="danger" @click="openUnloadMarines"/>
+          <Button text label="New" icon="pi pi-plus" severity="info" class="mr-2" @click="openNew"/>
+          <Button text label="Get By ID" severity="info" class="mr-2" @click="openGetStarshipById"/>
+          <Button text label="Load Marine" severity="info" class="mr-2" @click="openLoadMarineOnStarship"/>
+          <Button text label="Unload Marines" severity="info" @click="openUnloadMarines"/>
         </template>
       </Toolbar>
       <div class="overflow-x-scroll h-auto w-12">
-        <DataTable ref="dt" lazy :value="starships" dataKey="id">
+        <DataTable ref="dt" lazy :value="starships" scroll-height="70vh" dataKey="id">
           <template #header>
             <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
               <h4 class="m-0">Manage Starships</h4>

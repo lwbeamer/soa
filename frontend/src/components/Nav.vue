@@ -5,10 +5,10 @@
       <div class="nav-block">
         <div v-if="isClient" class="first-group">
 
-          <Button icon="pi " class="p-button-rounded p-button-info p-button-text" style="width:50px; height:50px" @click="$router.push('/main/profile')">
-            <font-awesome-icon class="nav-icon" icon="fa-solid fa-user" size="2x" />
-          </Button>
-          <span>Лич. каб.</span>
+<!--          <Button icon="pi " class="p-button-rounded p-button-info p-button-text" style="width:50px; height:50px" @click="$router.push('/main/profile')">-->
+<!--            <font-awesome-icon class="nav-icon" icon="fa-solid fa-user" size="2x" />-->
+<!--          </Button>-->
+<!--          <span>Лич. каб.</span>-->
         </div>
         <div v-if="isClient" class="second-group">
           <Button icon="pi " class="p-button-rounded p-button-info p-button-text" style="width:50px; height:50px" @click="$router.push('/main/space-marine')">
@@ -21,10 +21,10 @@
 
         </div>
         <div class="third-group">
-          <Button icon="pi " class="p-button-rounded p-button-info p-button-text" style="width:50px; height:50px" @click="logout">
-            <font-awesome-icon class="nav-icon" icon="fa-solid fa-right-from-bracket" size="2x" />
-          </Button>
-          <span>Выход</span>
+<!--          <Button icon="pi " class="p-button-rounded p-button-info p-button-text" style="width:50px; height:50px" @click="logout">-->
+<!--            <font-awesome-icon class="nav-icon" icon="fa-solid fa-right-from-bracket" size="2x" />-->
+<!--          </Button>-->
+<!--          <span>Выход</span>-->
 
         </div>
       </div>

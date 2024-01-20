@@ -5,7 +5,7 @@ import PrimeVue from 'primevue/config';
 import router from "@/router";
 
 import './assets/styles/style.css'
-import 'primevue/resources/themes/saga-blue/theme.css';
+import 'primevue/resources/themes/soho-light/theme.css';
 import 'primevue/resources/primevue.min.css';
 import 'primeflex/themes/primeone-light.css';
 import 'primeflex/primeflex.css';

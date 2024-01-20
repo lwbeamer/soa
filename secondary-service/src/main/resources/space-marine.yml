@@ -1,0 +1,468 @@
+openapi: 3.0.0
+info:
+  title: Space Marine API
+  version: 1.0.0
+servers:
+  - url: 'https://localhost:9090/itmo/api'
+tags:
+  - name: Space Marines
+    description: Операции с десантниками
+  - name: Space Utils
+    description: Утилитарные операции с десантниками
+paths:
+  /space-marines:
+    get:
+      summary: Получить всех десантников
+      parameters:
+        - name: sort
+          in: query
+          description: Имя поля и порядок сортировки (если не указан - ASC)
+          required: false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+              default: id
+              enum:
+                - id
+                - name
+                - health
+                - achivements
+                - category
+                - weaponType
+                - chapterName
+                - chapterWorld
+                - coordinatesX
+                - coordinatesY
+                - creationDate
+                - id DESC
+                - name DESC
+                - health DESC
+                - achivements DESC
+                - category DESC
+                - weaponType DESC
+                - chapterName DESC
+                - chapterWorld DESC
+                - coordinatesX DESC
+                - coordinatesY DESC
+                - creationDate DESC
+        - name: page
+          in: query
+          description: Номер страницы
+          schema:
+            type: integer
+            minimum: 1
+        - name: pageSize
+          in: query
+          description: Размер страницы
+          schema:
+            type: integer
+            minimum: 1
+        - name: name
+          in: query
+          description: Фильтр по имени
+          schema:
+            type: array
+            items:
+              type: string
+          style: deepObject
+          explode: true
+        - name: health
+          in: query
+          description: Фильтр по здоровью
+          schema:
+            type: array
+            items:
+              type: integer
+          style: deepObject
+          explode: true
+        - name: achievements
+          in: query
+          description: Фильтр по достижениям
+          schema:
+            type: array
+            items:
+              type: string
+          style: deepObject
+          explode: true
+        - name: category
+          in: query
+          description: Фильтр по категории
+          schema:
+            type: array
+            items:
+              type: string
+          style: deepObject
+          explode: true
+        - name: weaponType
+          in: query
+          description: Фильтр по типу оружия
+          schema:
+            type: array
+            items:
+              type: string
+          style: deepObject
+          explode: true
+        - name: chapterName
+          in: query
+          description: Фильтр по имени главы
+          schema:
+            type: array
+            items:
+              type: string
+          style: deepObject
+          explode: true
+        - name: chapterWorld
+          in: query
+          description: Фильтр по миру главы
+          schema:
+            type: array
+            items:
+              type: string
+          style: deepObject
+          explode: true
+        - name: creationDate
+          in: query
+          description: Фильтр по дате создания
+          schema:
+            type: array
+            items:
+              type: string
+              format: date-time
+          style: deepObject
+          explode: true
+        - name: coordinatesX
+          in: query
+          description: Фильтр по координате X
+          schema:
+            type: array
+            items:
+              type: number
+              format: double
+              maximum: 872
+          style: deepObject
+          explode: true
+        - name: coordinatesY
+          in: query
+          description: Фильтр по координате Y
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+              maximum: 110
+          style: deepObject
+          explode: true
+      responses:
+        '200':
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpaceMarine'
+        default:
+          description: Возвращает тело для ошибки (код ошибки, время и сообщение)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+          - Space Marines
+    post:
+      summary: Добавить нового десантника
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpaceMarineCreateRequest'
+      responses:
+        '204':
+          description: Десантник успешно создан
+        default:
+          description: Возвращает тело для ошибки (код ошибки, время и сообщение)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+          - Space Marines
+  /space-marines/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: ID десантника
+    get:
+      summary: Получить десантника по ID
+      responses:
+        '200':
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpaceMarine'
+        default:
+          description: Возвращает тело для ошибки (код ошибки, время и сообщение)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+          - Space Marines
+    put:
+      summary: Обновить десантника
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpaceMarineCreateRequest'
+      responses:
+        '204':
+          description: Успех
+        default:
+          description: Возвращает тело для ошибки (код ошибки, время и сообщение)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+          - Space Marines
+    delete:
+      summary: Удалить десантника
+      responses:
+        '204':
+          description: Успех
+        default:
+          description: Возвращает тело для ошибки (код ошибки, время и сообщение)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+          - Space Marines
+
+  /space-utils/{field-name}/min:
+    parameters:
+    - name: field-name
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Название поля
+    get:
+      summary: Применение агрегатной функции MIN к выбранному полю 
+      responses:
+        '200':
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpaceMarine'
+        default:
+          description: Возвращает тело для ошибки (код ошибки, время и сообщение)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+          - Space Utils
+
+  /space-utils/{field-name}/max:
+    parameters:
+    - name: field-name
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Название поля
+    get:
+      summary: Применение агрегатной функции MAX к выбранному полю 
+      responses:
+        '200':
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpaceMarine'
+        default:
+          description: Возвращает тело для ошибки (код ошибки, время и сообщение)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+          - Space Utils
+  /space-utils/{field-name}/sum:
+    parameters:
+    - name: field-name
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Название поля
+    get:
+      summary: Применение агрегатной функции SUM к выбранному полю 
+      responses:
+        '200':
+          description: Успех
+          content:
+            application/json:
+              schema:
+                properties:
+                  sumHealth:
+                    type: integer
+        default:
+          description: Возвращает тело для ошибки (код ошибки, время и сообщение)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+          - Space Utils
+components:
+  schemas:
+    SpaceMarineCreateRequest:
+      type: object
+      required:
+        - id
+        - name
+        - coordinates
+        - achievements
+        - category
+        - chapter
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        health:
+          type: integer
+          format: int64
+          minimum: 1
+        achievements:
+          type: string
+        category:
+          $ref: '#/components/schemas/AstartesCategory'
+        weaponType:
+          $ref: '#/components/schemas/Weapon'
+        chapter:
+          $ref: '#/components/schemas/Chapter'
+    SpaceMarine:
+      type: object
+      required:
+        - id
+        - name
+        - coordinates
+        - creationDate
+        - achievements
+        - category
+        - chapter
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        creationDate:
+          type: string
+          format: date-time
+        health:
+          type: integer
+          format: int64
+          minimum: 1
+        achievements:
+          type: string
+        category:
+          $ref: '#/components/schemas/AstartesCategory'
+        weaponType:
+          $ref: '#/components/schemas/Weapon'
+        chapter:
+          $ref: '#/components/schemas/Chapter'
+    Coordinates:
+      type: object
+      properties:
+        x:
+          type: number
+          format: double
+          maximum: 872
+        y:
+          type: integer
+          format: int64
+          maximum: 110
+    Chapter:
+      type: object
+      required:
+        - name
+        - world
+      properties:
+        name:
+          type: string
+          minLength: 1
+        world:
+          type: string
+    AstartesCategory:
+      type: string
+      enum:
+        - SCOUT
+        - AGGRESSOR
+        - TACTICAL
+        - LIBRARIAN
+        - APOTHECARY
+    Weapon:
+      type: string
+      enum:
+        - BOLTGUN
+        - HEAVY_BOLTGUN
+        - PLASMA_GUN
+        - GRAV_GUN
+    Starship:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        spaceMarine:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpaceMarine'
+        name:
+          type: string
+          example: RosKosmos
+        width:
+          type: integer
+          maximum: 532
+        height:
+          type: integer
+          maximum: 9987
+
+    Error:
+      type: object
+      required:
+        - httpCode
+        - message
+        - time
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 404
+        message:
+          type: string
+          example: Not Found
+        time:
+          type: string
+          format: date-time
+          example: 2023-09-13T00:00:090Z

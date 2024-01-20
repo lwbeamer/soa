@@ -2,15 +2,16 @@
   <Toast/>
   <div class="card bg-white border-primary-50 border-round-2xl h-auto w-auto ml-2 overflow-x-scroll">
     <div class="card">
-      <Toolbar class="mb-4">
+      <Toolbar >
         <template #start>
-          <Button label="New" icon="pi pi-plus" severity="success" class="mr-2" @click="openNew"/>
-          <Button label="Get By ID" severity="danger" class="mr-2" @click="openGetMarineById"/>
-          <Button label="Space Utils" severity="success" @click="openSpaceUtils"/>
+          <Button text label="New" icon="pi pi-plus" severity="info" class="mr-2" @click="openNew"/>
+          <Button text label="Get By ID" severity="info" class="mr-2" @click="openGetMarineById"/>
+          <Button text label="Space Utils" severity="info" @click="openSpaceUtils"/>
         </template>
       </Toolbar>
       <div class="overflow-x-scroll h-auto w-auto">
         <DataTable v-model:filters="filters" ref="dt" lazy :value="marines" dataKey="id" sortMode="multiple"
+                   :size="'small'" showGridlines
                    :paginator="true" :page="0" :rows="10"
                    :totalRecords="totalRecords"
                    filterDisplay="menu"
@@ -19,7 +20,7 @@
                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                    :rowsPerPageOptions="[1,5,10,25]"
                    scrollable
-                   scroll-height="60vh"
+                   scroll-height="65vh"
                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} marines">
           <template #header>
             <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
@@ -40,6 +41,23 @@
           </Column>
           <Column field="name" header="Name" filterField="name" sortable style="min-width:16rem"
                   :showFilterMatchModes="false" :show-filter-operator="false">
+            <template #body="slotProps">
+              <div class="tooltip text-center" v-tooltip.top="{
+                value: slotProps.data.name,
+                pt: {
+                    arrow: {
+                        style: {
+                            borderBottomColor: 'var(--primary-color)'
+                        }
+                    },
+                    text: 'bg-primary font-medium'
+                }
+            }">
+                {{
+                  slotProps.data.name.length >= 10 ? slotProps.data.name.substring(0, 10).concat('...') : slotProps.data.name.toString()
+                }}
+              </div>
+            </template>
             <template #filter="{ filterModel }">
               <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by name"/>
             </template>
@@ -53,6 +71,23 @@
           </Column>
           <Column field="achievements" header="Achievements" sortable style="min-width:12rem"
                   :showFilterMatchModes="false" :show-filter-operator="false">
+            <template #body=" slotProps">
+              <div class="tooltip text-center" v-tooltip.top="{
+                value: slotProps.data.achievements,
+                pt: {
+                    arrow: {
+                        style: {
+                            borderBottomColor: 'var(--primary-color)'
+                        }
+                    },
+                    text: 'bg-primary font-medium'
+                }
+            }">
+                {{
+                  slotProps.data.achievements.length >= 10 ? slotProps.data.achievements.substring(0, 10).concat('...') : slotProps.data.achievements.toString()
+                }}
+              </div>
+            </template>
             <template #filter="{ filterModel }">
               <InputText v-model="filterModel.value" type="text" class="p-column-filter"
                          placeholder="Search by achievements"/>
@@ -99,6 +134,23 @@
           </Column>
           <Column field="chapter.name" header="Chapter Name" sortable style="min-width:16rem"
                   :showFilterMatchModes="false" :show-filter-operator="false">
+            <template #body=" slotProps">
+              <div class="tooltip text-center" v-tooltip.top="{
+                value: slotProps.data.chapter.name,
+                pt: {
+                    arrow: {
+                        style: {
+                            borderBottomColor: 'var(--primary-color)'
+                        }
+                    },
+                    text: 'bg-primary font-medium'
+                }
+            }">
+                {{
+                  slotProps.data.chapter.name.length >= 10 ? slotProps.data.chapter.name.substring(0, 10).concat('...') : slotProps.data.chapter.name
+                }}
+              </div>
+            </template>
             <template #filter="{ filterModel }">
               <InputText v-model="filterModel.value" type="text" class="p-column-filter"
                          placeholder="Search by chapter name"/>
@@ -106,6 +158,23 @@
           </Column>
           <Column field="chapter.world" header="Chapter World" sortable style="min-width:16rem"
                   :showFilterMatchModes="false" :show-filter-operator="false">
+            <template #body=" slotProps">
+              <div class="tooltip text-center" v-tooltip.top="{
+                value: slotProps.data.chapter.world,
+                pt: {
+                    arrow: {
+                        style: {
+                            borderBottomColor: 'var(--primary-color)'
+                        }
+                    },
+                    text: 'bg-primary font-medium'
+                }
+            }">
+                {{
+                  slotProps.data.chapter.world.length >= 10 ? slotProps.data.chapter.world.substring(0, 10).concat('...') : slotProps.data.chapter.world
+                }}
+              </div>
+            </template>
             <template #filter="{ filterModel }">
               <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by world"/>
             </template>
@@ -626,7 +695,12 @@ export default {
                     this.$toast.add({severity: 'success', summary: 'SpaceMarine', detail: "Marine Updated!", life: 3000});
                   },
                   (err) => {
-                    this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data.message, life: 3000});
+                    this.$toast.add({
+                      severity: 'error',
+                      summary: 'SpaceMarine',
+                      detail: err.response.data.message,
+                      life: 3000
+                    });
                   })
         } else {
           // this.marines.push(this.marine);
@@ -637,7 +711,12 @@ export default {
                     this.$toast.add({severity: 'success', summary: 'SpaceMarine', detail: "Marine Created!", life: 3000});
                   },
                   (err) => {
-                    this.$toast.add({severity: 'error', summary: 'SpaceMarine', detail: err.response.data.message, life: 3000});
+                    this.$toast.add({
+                      severity: 'error',
+                      summary: 'SpaceMarine',
+                      detail: err.response.data.message,
+                      life: 3000
+                    });
                   })
         }
 
